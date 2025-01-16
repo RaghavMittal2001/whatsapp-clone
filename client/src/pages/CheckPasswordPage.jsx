@@ -1,21 +1,48 @@
-import React from "react";
-import Navbar from "./Navbar";
+import React, { useEffect, useState } from 'react';
+import Navbar from './Navbar';
+import toast from 'react-hot-toast';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { settoken, setuser } from '../redux/userslice';
+
 
 function CheckPasswordPage() {
+ 
+  const navigate =useNavigate();
+  const location =useLocation();
+  const dispatch=useDispatch();
+  // console.log(location.state);
+  useEffect(()=>{
+    if ( !location?.state?.name) {
+      console.log('No location, state, or state.name present');
+      navigate('/email');
+    }
+    else(
+      setData({
+        userid:location.state._id,
+        password: "",
+      })
+    )
+   
+  },[])
+  
   const [data, setData] = useState({
-    email: "",
+    userid:'',
+    password: "",
   });
+  const d=useSelector(state=>state.user)
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Add your form submission logic here
     // console.log(data);
-    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/LoginEmail`;
+    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/LoginPassword`;
     await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+      credentials: 'include', 
     })
       .then((response) => {
         if (!response.ok) {
@@ -24,18 +51,29 @@ function CheckPasswordPage() {
         return response.json();
       })
       .then((data) => {
-        console.log("data :", data);
+        // console.log("data :", data);
         if (data.error) toast.error(data.message);
         else {
           toast.success(data.message);
-          navigate("/password");
+          console.log(data)
+          dispatch(setuser({
+            _id:data.data._id,
+            name:data.data.name,
+            email:data.data.email,
+            profile_pic:data.data.profile_pic
+          }));
+          dispatch(settoken(data.token));
+          localStorage.setItem('token',data.token)
+          navigate("/");
         }
       })
       .catch((err) => {
         console.log("err:", err);
         toast.error();
       });
+      
     console.log("Form submitted");
+
   };
   const handleonchange = (e) => {
     const { name, value } = e.target;
@@ -73,6 +111,7 @@ function CheckPasswordPage() {
                   Password:
                 </label>
                 <input
+                  onChange={handleonchange}
                   type="password"
                   id="password"
                   name="password"
@@ -85,10 +124,11 @@ function CheckPasswordPage() {
                 />
               </div>
               <button type="submit" className="btn btn-success">
-                Login
+               Let's Go
               </button>
             </div>
           </form>
+          <p style={{fontSize:"x-large"}} className="my-3 mt-1 text-center">New User ? <Link className="hover:underline transition duration-300 cursor-pointer" to={"/register"} >Register</Link></p>
         </div>
       </div>
     </div>

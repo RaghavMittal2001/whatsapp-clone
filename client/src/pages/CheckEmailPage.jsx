@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './Navbar';
-import UploadFile from '../helper/UploadFile.jsx';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -36,7 +35,9 @@ function CheckEmailPage() {
       else
       {
         toast.success(data.message)
-        navigate('/password')
+        navigate('/password',{
+          state:data.data
+        })
       }
     })
     .catch(err => {

@@ -3,8 +3,8 @@ import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken'
 const Checkpassword=async(req,res)=>{
     try {
-        const { userid,password }=req.body;
-        console.log(userid);
+        const { userid ,password }=req.body;
+        console.log(userid,"i am in check password in server");
         const user = await User.findOne({ _id:userid });
         if (!user) {
             return res.status(404).json({
@@ -18,15 +18,18 @@ const Checkpassword=async(req,res)=>{
                 id:user._id,
                 email:user.email
             }
-            const token = jwt.sign(tokendata,process.env.Jwt_Secret_Key);
-            const cokkieoptions={
+            const token = jwt.sign(tokendata,process.env.Jwt_Secret_Key,{ expiresIn: '7d' });
+            const cookieOptions={
                 http:true,
+                sameSite: 'Strict', // Restrict sending the cookie with cross-site requests
+                maxAge: 3600000, 
                 secure:true
             }
-            return res.cookie('token',token,cokkieoptions).status(200).json({
+            return res.cookie('token',token,cookieOptions).status(200).json({
                 message:"Login successfully ",
                 success:true,
-                data: user
+                data: user,
+                token:token
             })
         } else {
             return res.status(400).json({

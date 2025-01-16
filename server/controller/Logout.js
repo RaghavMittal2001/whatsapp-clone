@@ -9,7 +9,7 @@ const Logout=async(req,res)=>{
             message:"session out ",
             success:true
         })
-
+ 
         
     } catch (error) {
         return res.status(500).json({

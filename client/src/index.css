@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 :root {
+  padding:0px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
+  height:100vh;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
@@ -31,7 +32,7 @@ body {
   //display: flex;
   /* place-items: center; */
   //min-width: 320px;
-  //min-height: 100vh;
+  min-height: 100vh;
 }
 
 h1 {
@@ -39,7 +40,7 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+/* button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -49,7 +50,7 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
-}
+} */
 button:hover {
   border-color: #646cff;
 }
@@ -58,7 +59,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 .full-screen {
-  /* width: 100vw; */
+  width: 100vw;
   height: 100vh;
   /* display: flex; */
   flex-direction: column; /* Allows the Navbar and form to stack */
@@ -66,3 +67,22 @@ button:focus-visible {
   align-items: center; /* Center horizontally */
  
 }
+.home-container {
+  display: flex;
+  height: 100vh; /* Full height of the viewport */
+}
+
+.sidebar {
+  width: 28%; /* Fixed sidebar width */
+  background-color: #f4f4f4; /* Adjust according to your design */
+  padding: 5px; /* Add padding for content inside the sidebar */
+  height:100vh;
+}
+
+.main-content {
+  flex-grow: 1; /* Content area takes the remaining space */
+  padding: 5px;
+  height:100vh;
+  overflow-y: auto; /* Prevent content from overflowing */
+}
+
