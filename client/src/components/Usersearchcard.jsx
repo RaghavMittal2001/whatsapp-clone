@@ -1,8 +1,8 @@
 import React from 'react'
-import { FaRegUserCircle } from "react-icons/fa";
 import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
 
+import PropTypes from 'prop-types'; // Import PropTypes
 const Usersearchcard = ({user}) => {
   const handleClick = () => {
     console.log("in Usersearchcard add collapse button");
@@ -28,5 +28,12 @@ const Usersearchcard = ({user}) => {
     </Link>
   )
 }
-
+Usersearchcard.propTypes = {
+  user: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    profile_pic: PropTypes.URL.isRequired,
+    name: PropTypes.string.isRequired, // User name must be a string and is required
+    email: PropTypes.string.isRequired, // User email must be a string and is required
+  }).isRequired, // The entire user object is required
+};
 export default Usersearchcard

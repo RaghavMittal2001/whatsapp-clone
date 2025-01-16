@@ -2,7 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import http from "http";
 import Getuserdetailfromtoken from "../Helper/Getuserdetailfromtoken.js";
-
+import dotenv from dotenv;
 
 const app = express();
 const server = http.createServer(app);
@@ -32,7 +32,6 @@ io.on("connection", async (socket) => {
     } catch (err) {
         console.error(err.message);
         socket.emit("error", { message: err.message }); // Notify the client
-        onlineuser.delete(user._id)
         socket.disconnect(); // Disconnect the client 
     }
 

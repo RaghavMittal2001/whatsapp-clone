@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
 import Sidebar from "../components/Sidebar";
 import io from 'socket.io-client';
-import { setonlineuser, setuser } from "../redux/userslice";
+import { setonlineuser, settoken, setuser } from "../redux/userslice";
 
 
 function Home() {
