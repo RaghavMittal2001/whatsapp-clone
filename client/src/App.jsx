@@ -1,15 +1,17 @@
-import './App.css'
-import { Outlet } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast';
+import './App.css';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+
 function App() {
   return (
-    <>
-      {/* <Toaster /> */}
+    <div>
+      {/* <Header /> This is a global header for your app */}
       <div className='container'>
-        <Outlet />
+        <Outlet /> {/* Child routes will be rendered here */}
       </div>
-    </>
-  )
+      {/* <Footer /> This is a global footer */}
+    </div>
+  );
 }
 
-export default App
+export default App;

@@ -1,12 +1,19 @@
 import React from "react";
 
-const Loading = () => {
+const Loading = ({ size = 12 }) => {
+  const sizeMap = {
+    12: "w-12 h-12",
+    10: "w-10 h-10",
+    8: "w-8 h-8",
+    6: "w-6 h-6",
+  };
+
   return (
-    <div className=" flex justify-center">
-      <div role="status">
+    <div className="flex justify-center">
+      <div role="status" aria-live="polite">
         <svg
           aria-hidden="true"
-          class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-primary "
+          className={`${sizeMap[size] || "w-12 h-12"} text-gray-200 animate-spin dark:text-gray-600 fill-primary`}
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +27,7 @@ const Loading = () => {
             fill="currentFill"
           />
         </svg>
-        <span class="sr-only">Loading...</span>
+        <span className="sr-only">Loading...</span>
       </div>
     </div>
   );

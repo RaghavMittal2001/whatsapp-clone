@@ -2,13 +2,13 @@ import express from "express";
 import { Server } from "socket.io";
 import http from "http";
 import Getuserdetailfromtoken from "../Helper/Getuserdetailfromtoken.js";
-import dotenv from dotenv;
+import User from "../model/User.js";
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.Frontend_URL || "http://localhost:5173",
+        origin: process.env.Frontend_URL || "http://localhost:5173", 
         credentials: true,
     },
 });
@@ -22,8 +22,22 @@ io.on("connection", async (socket) => {
         const user = await Getuserdetailfromtoken(token);
         // console.log('User connected:', user);
         socket.join(user._id);
-        onlineuser.add(user._id);
+        onlineuser.add(user._id.toString());
         io.emit("onlineuser", Array.from(onlineuser));
+        socket.on('message_page',async(userId)=>{
+            console.log('userId',userId);
+            const userdetails =await User.findById(userId).select("-password");
+            console.log(userdetails);
+            
+            const payload={
+                _id :userdetails._id,
+                name :userdetails.name,
+                email:userdetails.email,
+                profile_pic:userdetails.profile_pic,
+                online:onlineuser.has(userId)
+            }
+            socket.emit('message_user',payload )
+        })
         //disconnection
         socket.on("disconnect", () => {
             onlineuser.delete(user._id)

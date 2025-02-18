@@ -4,6 +4,27 @@
   /* padding: 2rem; */
   text-align: center;
 }
+/* Hide scrollbar (optional) */
+.scrollbar::-webkit-scrollbar {
+  width: 16px; /* Adjust width */
+}
+
+/* Scrollbar Track */
+.scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray background */
+  border-radius: 10px;
+}
+
+/* Scrollbar Handle */
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* Darker gray */
+  border-radius: 10px;
+}
+
+/* On hover */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Even darker gray */
+}
 
 .logo {
   height: 6em;

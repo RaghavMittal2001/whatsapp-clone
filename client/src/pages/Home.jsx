@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import io from 'socket.io-client';
-import { setonlineuser, settoken, setuser } from "../redux/userslice";
+import { setonlineuser, setsocketconnection, settoken, setuser } from "../redux/userslice";
 
 
 function Home() {
@@ -50,7 +50,8 @@ function Home() {
       console.log(data);
       dispatch(setonlineuser(data));
     })
-
+    dispatch(setsocketconnection(socketconnection))
+    dispatch(setsocketconnection(socketconnection));
     socketconnection.on('connect', () => {
       console.log('Connected to server:', socketconnection.id);
     });
@@ -74,12 +75,12 @@ function Home() {
 
   return (
     <div className="home-container">
-      <aside className="sidebar ">
+      <aside className="flex sidebar ">
         {/* Sidebar content */}
         <Sidebar />
       
       </aside>
-      <main className="main-content">
+      <main className="flex-grow main-content">
         <Outlet />
         
       </main>

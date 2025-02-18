@@ -9,9 +9,9 @@ function Avatar({userid ,name ,imageurl,height='50px' ,width='50px' }) {
   console.log(isonline);
   
   return (
-    <div>
+    <div className='p-2  border-rounded'>
       
-        <img src={imageurl || err} alt={name} style={{ height, width }} 
+        <img className="rounded-full" src={imageurl || err} alt={name} style={{ height, width }} 
         onError={(e) => {
           // Fallback to error image if the provided image fails to load
           e.target.src = err;

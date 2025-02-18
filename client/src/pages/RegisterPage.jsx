@@ -34,7 +34,7 @@ function RegisterPage() {
     setloading(true);
     const file = event.target.files[0];
     const uploadedPhoto = await UploadFile(file);
-    const { value } = event.target;
+  
     setData((prev) => {
       return {
         ...prev,
@@ -52,7 +52,7 @@ function RegisterPage() {
 
     setUploadPhoto(null);
     document.getElementById('profile_pic').value = null;
-    const { name } = event.target;
+   
     setData((prev) => {
       return {
         ...prev,

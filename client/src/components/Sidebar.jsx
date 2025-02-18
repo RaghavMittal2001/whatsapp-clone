@@ -1,71 +1,83 @@
 import React, { useState } from "react";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
-import { FaUserPlus } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { FaUserPlus, FaRegUserCircle } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { FaRegUserCircle } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 import Userlist from "./Userlist";
 import Adduser from "./Adduser";
 import Editprofile from "./Editprofile";
-function Sidebar() {
-  const handlelogout=()=>{
-    
-  }
-  const [temp,settemp]=useState(0)
-  return (
 
+function Sidebar() {
+  const [temp, setTemp] = useState(0);
+
+  const handleLogout = () => {
+    // Logic to clear session, token or logout
+    console.log("User logged out");
+    // Redirect to login page (if applicable)
+  };
+
+  return (
     <div className="home-container">
       <aside
         className="sidebar flex flex-col justify-between"
         style={{ backgroundColor: "rgb(40 200 26 / 55%)", width: "15%" }}
       >
-        <div className="">
-          <NavLink
-        
+        <div>
+          <div
+            // to={`/user/chat/${userId}`} // Ensure proper routing if needed
             className={({ isActive }) =>
-              `flex justify-center items-center h-14 cursor-pointer hover:scale-110 rounded ${
-                isActive || "bg-gray-200"
+              ` chat-button flex justify-center items-center h-14 cursor-pointer hover:scale-110 rounded ${
+                isActive ? "bg-gray-200" : ""
               }`
             }
-            onClick={()=>settemp(0)}
+            onClick={() => {
+              setTemp(0);
+            }}
             title="Chat"
           >
-            <div >
-              <IoChatbubbleEllipsesSharp color="black" size={40} />
-            </div>
-          </NavLink>
-          <NavLink
-           onClick={()=>settemp(1)}
-            className="flex justify-center items-center h-14 cursor-pointer hover:scale-110"
-            title="Add friend ">
+            <IoChatbubbleEllipsesSharp color="black" size={40} />
+          </div>
+          <div
+            // to="/add-friend" // Ensure routing
+            onClick={() => setTemp(1)}
+            className={({ isActive }) =>
+              `flex justify-center items-center h-14 cursor-pointer hover:scale-110 ${
+                isActive ? "bg-gray-200" : ""
+              }`
+            }
+            title="Add Friend"
+          >
             <FaUserPlus color="black" size={40} />
-          </NavLink>
+          </div>
         </div>
+
         <div>
-        <NavLink
-           onClick={()=>settemp(2)}
+          <div
+            // to="/profile" // Ensure routing
+            onClick={() => setTemp(2)}
+            className={({ isActive }) =>
+              `flex justify-center items-center h-14 cursor-pointer hover:scale-110 ${
+                isActive ? "bg-gray-200" : ""
+              }`
+            }
+            title="Edit Profile"
+          >
+            <FaRegUserCircle color="black" size={40} />
+          </div>
+          <button
             className="flex justify-center items-center h-14 cursor-pointer hover:scale-110"
-            title="Add friend ">
-            < FaRegUserCircle color="black" size={40} />
-          </NavLink>
-          <button className="flex justify-center items-center h-14 cursor-pointer hover:scale-110" onClick={handlelogout}>
-            <span className="-ml-1">
-              <BiLogOut size={40} />
-            </span>
+            onClick={handleLogout}
+          >
+            <BiLogOut size={40} />
           </button>
         </div>
       </aside>
-      <main className="main-content">
-         {
-          (temp===0) && <Userlist/>
-         }
-         {
-          (temp===1) && <Adduser temp={temp}/>
-         }
-         {
-          (temp===2) && <Editprofile/>
-         }
+
+      <main className="main-content flex-grow">
+        {temp === 0 && <Userlist />}
+        {temp === 1 && <Adduser temp={temp} />}
+        {temp === 2 && <Editprofile />}
       </main>
     </div>
   );
