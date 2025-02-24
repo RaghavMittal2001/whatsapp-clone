@@ -2,10 +2,14 @@ import React from "react";
 
 const Loading = ({ size = 12 }) => {
   const sizeMap = {
+    20: "w-20 h-20",
+    16: "w-16 h-16",
+    14: "w-14 h-14",
     12: "w-12 h-12",
     10: "w-10 h-10",
     8: "w-8 h-8",
     6: "w-6 h-6",
+    4: "w-4 h-4",
   };
 
   return (

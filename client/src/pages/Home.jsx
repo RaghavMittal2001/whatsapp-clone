@@ -20,7 +20,7 @@ function Home() {
       .then((data) => {
         console.log("Current user details:", data);
         if (data.data.logout) {
-          alert(data.data.message)
+          console.error(data.data.message)
           navigate('/email')
         }
         dispatch(setuser({

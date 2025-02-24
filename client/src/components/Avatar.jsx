@@ -6,10 +6,9 @@ function Avatar({userid ,name ,imageurl,height='50px' ,width='50px' }) {
   const onlineuser =useSelector(state=>state.user.onlineuser);
 
   const isonline = onlineuser.includes(userid);
-  console.log(isonline);
   
   return (
-    <div className='p-2  border-rounded'>
+    <div className='p-2 border-rounded'>
       
         <img className="rounded-full" src={imageurl || err} alt={name} style={{ height, width }} 
         onError={(e) => {

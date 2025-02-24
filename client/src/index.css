@@ -17,7 +17,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+/* Override Bootstrap bg-primary */
+.bg-primary {
+  --tw-bg-opacity: 1;
+  background-color: rgba(40, 200, 26, 0.55) !important; /* Tailwind Blue-600 */
+}
 a {
   font-weight: 500;
   color: #646cff;
