@@ -21,9 +21,11 @@ io.on("connection", async (socket) => {
   console.log("User connected:", socket.id);
 
   const token = socket.handshake.auth.token;
+  let userId;
+
   try {
     const user = await Getuserdetailfromtoken(token);
-    const userId = user._id.toString();
+    userId = user._id.toString();
 
     socket.join(userId);
     onlineUsers.add(userId);
@@ -31,11 +33,16 @@ io.on("connection", async (socket) => {
 
     console.log("User joined room:", userId);
 
-    // Get user details of receiver requested from sender side
-    socket.on("message_page", async (receiverId) => {
-    //   console.log("Fetching user details for:", receiverId);
-      const userDetails = await User.findById(receiverId).select("-password");
+    // Clean up old event listeners before adding new ones
+    socket.removeAllListeners("message_page");
+    socket.removeAllListeners("new_message");
+    socket.removeAllListeners("get_conversation");
+    socket.removeAllListeners("get_user");
+    socket.removeAllListeners("Get_last_message");
 
+    // Get user details and conversation of receiver requested from sender
+    socket.on("message_page", async (receiverId) => {
+      const userDetails = await User.findById(receiverId).select("-password");
       if (!userDetails) {
         console.log("User not found:", receiverId);
         return;
@@ -50,6 +57,16 @@ io.on("connection", async (socket) => {
       };
 
       socket.emit("message_user", payload);
+
+      // Get previous conversation
+      const conversation = await Conversation.findOne({
+        $or: [
+          { sender: userId, receiver: receiverId },
+          { sender: receiverId, receiver: userId },
+        ],
+      }).populate("messages");
+
+      socket.emit("all_message", { conversation });
     });
 
     // New message from sender to receiver
@@ -65,7 +82,7 @@ io.on("connection", async (socket) => {
 
       // If conversation does not exist, create a new one
       if (!messageConversation) {
-        console.log("Conversation does not exist. Creating new one...");
+        console.log("Creating new conversation...");
         messageConversation = await new Conversation({
           sender: data.sender,
           receiver: data.receiver,
@@ -73,7 +90,7 @@ io.on("connection", async (socket) => {
         }).save();
       }
 
-      // Create new message
+      // Create and save new message
       const newMessage = await Message.create({
         text: data.text,
         imageUrl: data.imageUrl,
@@ -85,28 +102,64 @@ io.on("connection", async (socket) => {
       const updatedConversation = await Conversation.findByIdAndUpdate(
         messageConversation._id,
         { $push: { messages: newMessage._id } },
-        { new: true } // Ensure updated document is returned
+        { new: true }
       ).populate("messages");
-
       console.log("Updated conversation:", updatedConversation);
-
-      // Send message to both sender and receiver using correct room
+      // Emit updated conversation to both sender and receiver
       io.to(data.receiver).emit("all_message", { conversation: updatedConversation });
       io.to(data.sender).emit("all_message", { conversation: updatedConversation });
     });
 
-    // User disconnects
-    socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
-      onlineUsers.delete(userId);
-      io.emit("onlineuser", Array.from(onlineUsers)); // Update online users
+    // Fetch all previous conversations of the logged-in user
+    socket.on("get_conversation", async (data) => {
+      const current_conversations = await Conversation.find({
+        $or: [{ sender: data }, { receiver: data}],
+      }).populate("messages");
+      const conversations = current_conversations.map((conversation) => {
+        const countUnseenMsg = conversation.messages.reduce((prev, curr) => prev + (curr.seen ? 0 : 1), 0);
+        return {
+          _id: conversation._id,
+          receiver: conversation.receiver,
+          sender: conversation.sender,
+          unseenMsg: countUnseenMsg,
+          lastMsg: conversation.messages[conversation.messages.length - 1],
+        };
+      });
+      socket.emit("all_conversations", conversations);
+    });
+ 
+    // Get user details of receiver
+    socket.on("get_user", async (receiverId) => {
+      const userDetails = await User.findById(receiverId).select("-password");
+      if (!userDetails) {
+        console.log("User not found:", receiverId);
+        return;
+      }
+
+      const payload = {
+        _id: userDetails._id,
+        name: userDetails.name,
+        email: userDetails.email,
+        profile_pic: userDetails.profile_pic,
+        online: onlineUsers.has(receiverId),
+      };
+
+      socket.emit("user_details", payload);
     });
 
+    // Handle user disconnection
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", socket.id);
+      if (userId) {
+        onlineUsers.delete(userId);
+        io.emit("onlineuser", Array.from(onlineUsers));
+      }
+    });
   } catch (err) {
     console.error("Socket authentication error:", err.message);
     socket.emit("error", { message: err.message });
-    socket.disconnect(); // Disconnect client on error
+    socket.disconnect();
   }
-});
+});   
 
 export { app, server };

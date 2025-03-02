@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { IoChatbubbleEllipsesSharp } from "react-icons/io5";
 import { FaUserPlus, FaRegUserCircle } from "react-icons/fa";
 import { BiLogOut } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
 
 import Userlist from "./Userlist";
 import Adduser from "./Adduser";
@@ -20,8 +19,8 @@ function Sidebar() {
   return (
     <div className="home-container">
       <aside
-        className="sidebar flex flex-col justify-between"
-        style={{ backgroundColor: "rgb(40 200 26 / 55%)", width: "15%" }}
+        className="flex flex-col justify-between rounded sidebar"
+        style={{ backgroundColor: "rgb(40 200 26 / 55%)", width: "20%" }}
       >
         <div>
           <div
@@ -66,7 +65,7 @@ function Sidebar() {
             <FaRegUserCircle color="black" size={40} />
           </div>
           <button
-            className="flex justify-center items-center h-14 cursor-pointer hover:scale-110"
+            className="flex items-center justify-center cursor-pointer h-14 hover:scale-110"
             onClick={handleLogout}
           >
             <BiLogOut size={40} />
@@ -74,7 +73,7 @@ function Sidebar() {
         </div>
       </aside>
 
-      <main className="main-content flex-grow">
+      <main className="flex-grow w-full main-content">
         {temp === 0 && <Userlist />}
         {temp === 1 && <Adduser temp={temp} />}
         {temp === 2 && <Editprofile />}

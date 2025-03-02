@@ -10,7 +10,6 @@ import { IoClose } from "react-icons/io5";
 import Loading from "./Loading";
 import background from "../assets/background.jpeg";
 import { IoSendSharp } from "react-icons/io5";
-import { use } from "react";
 
 const MessagePage = () => {
   const params = useParams();
@@ -127,15 +126,19 @@ const MessagePage = () => {
     console.log("Received user details:", data);
     setdatauser(data);
   };
-
+  const handleRefreshPage = (data) => {
+    console.log("Received all messages:", data.conversation.messages);
+    setallmessage(data.conversation.messages);
+  };
   useEffect(() => {
     if (socketconnection) {
       socketconnection.emit("message_page", params.userId);
 
       socketconnection.on("message_user", handleMessageUser);
-
+      socketconnection.on("all_message", handleRefreshPage)
       return () => {
         socketconnection.off("message_user", handleMessageUser);
+        socketconnection.off("all_message", handleRefreshPage);
       };
     }
   }, [socketconnection, params.userId]);
@@ -204,14 +207,15 @@ const MessagePage = () => {
                   ></div>
 
                   {/* Message Content */}
-                  <div
+                  <div 
+                  ref={currentmessage}
                     className={`p-2 text-sm rounded-lg shadow ${
                       msg.msgby === loggedInUser._id
                         ? "bg-green-500 text-black rounded-br-none" // Sender Bubble
                         : "bg-gray-200 text-black rounded-bl-none" // Receiver Bubble
                     }`}
                   >
-                    <div className="relative max-w-xs md:max-w-sm lg:max-w-md">
+                    <div className="relative max-w-xs p-2 md:max-w-sm lg:max-w-md">
                       {msg.imageUrl && (
                         <img
                           src={msg.imageUrl}
@@ -356,6 +360,7 @@ const MessagePage = () => {
           onSubmit={handlesendmessage}
         >
           <input
+            id="message"
             type="text"
             value={message.text}
             onChange={handleonchange}

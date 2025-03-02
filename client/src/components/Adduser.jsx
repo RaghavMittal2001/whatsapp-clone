@@ -5,27 +5,29 @@ import Usersearchcard from "./Usersearchcard";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-const Adduser = ({ temp }) => {  // Corrected the prop destructuring
+const Adduser = ({ temp }) => {
   const onlineUsers = useSelector((state) => state.user.onlineuser);
   const [searchUser, setSearchUser] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
 
-  // Debounced API call function
+  // API Call Function with Debounce
   const handleSearchUser = useCallback(async () => {
-    if (search.trim() === "") {
-      setSearchUser([]); // Clear results when input is empty
+    if (!search.trim()) {
+      setSearchUser([]); // Clear results when empty
       return;
     }
 
     setLoading(true);
     try {
-      const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/searchuser`;
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ search }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/searchuser`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ search }),
+        }
+      );
 
       const data = await response.json();
       setLoading(false);
@@ -42,11 +44,16 @@ const Adduser = ({ temp }) => {  // Corrected the prop destructuring
     }
   }, [search]);
 
-  // Debounce effect to optimize API calls
+  // Debounce Effect
   useEffect(() => {
+    if (!search.trim()) {
+      setSearchUser([]);
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
       handleSearchUser();
-    }, 500); // Adjust debounce delay as needed
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [search, handleSearchUser]);
@@ -55,31 +62,50 @@ const Adduser = ({ temp }) => {  // Corrected the prop destructuring
   console.log("Search Results:", searchUser);
 
   return (
-    <div>
+    <div className="p-4 bg-white rounded shadow-md">
       <Toaster />
-      <div className="bg-white rounded h-14 overflow-hidden flex">
+      
+      {/* Search Bar */}
+      <div className="relative flex items-center w-full overflow-hidden bg-gray-100 rounded-lg">
+        <label htmlFor="search" className="w-full sr-only">
+          Search user by name or email
+        </label>
         <input
+          id="search"
           type="text"
-          placeholder="Search user by name or email"
+          placeholder="Search user by name or email..."
           onChange={(e) => setSearch(e.target.value)}
           value={search}
-          className="w-full outline-none py-1 h-full px-4 bg-white font-bold"
+          className="w-full h-12 text-sm font-medium bg-transparent outline-none px-"
+          aria-label="Search user"
         />
-        <div className="h-14 w-14 flex justify-center items-center">
-          <IoSearchOutline size={25} />
+        <div className="flex items-center justify-center w-12 h-12 text-gray-500">
+          <IoSearchOutline size={22} />
         </div>
       </div>
 
-      <div className="p-3 bg-white mt-2 w-full rounded">
-        {search === "" && <></>}
-        {!loading && searchUser.length === 0 && search !== "" && <p>No user found</p>}
-        {loading && <p><Loading /></p>}
-
-        {!loading && searchUser.length !== 0 && search !== "" &&
+      {/* Search Results */}
+      <div className="w-full p-3 mt-3 bg-white rounded">
+        {search === "" && null}
+        {loading && (
+          <div className="flex items-center justify-center mt-4">
+            <Loading />
+          </div>
+        )}
+        {!loading && searchUser.length === 0 && search !== "" && (
+          <p className="text-center text-gray-500">No user found</p>
+        )}
+        {!loading &&
+          searchUser.length !== 0 &&
+          search !== "" &&
           searchUser.map((user) => (
-            <Usersearchcard key={user._id} user={user} profile_pic={user.profile_pic} temp={temp} />
-          ))
-        }
+            <Usersearchcard
+              key={user._id}
+              user={user}
+              profile_pic={user.profile_pic}
+              temp={temp}
+            />
+          ))}
       </div>
     </div>
   );
