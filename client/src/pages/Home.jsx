@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
 import io from "socket.io-client";
 import { setonlineuser, setsocketconnection, settoken, setuser } from "../redux/userslice";
+import Sidebar from "../components/Sidebar/Sidebar.jsx";
 
 function Home() {
   const navigate = useNavigate();
@@ -81,12 +81,13 @@ function Home() {
   return (
     <div className="flex h-screen home-container">
       {/* Sidebar */}
-      <aside className="w-1/5 bg-gray-100 dark:bg-gray-900">
+      <aside className="bg-gray-100 dark:bg-gray-900" style={{ width: "25rem" }}>
         <Sidebar />
+        
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow p-4 bg-white dark:bg-gray-800">
+      <main className="flex-grow p-3 bg-white dark:bg-gray-800">
         <Outlet />
       </main>
     </div>

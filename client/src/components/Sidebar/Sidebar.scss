@@ -1,0 +1,42 @@
+.sidebar {
+    width: 20%; /* Fixed sidebar width */
+    background-color: #f4f4f4; /* Adjust according to your design */
+    padding: 2px; /* Add padding for content inside the sidebar */
+    height:100vh;
+    display: flex;
+    flex-direction: column;
+    
+}
+.app__navigationbar {
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content: space-between;
+    height: 100%;
+    width: 20%;
+    color: #000000;
+    background-color: rgb(40 200 26 / 55%); 
+    padding: 2px;
+
+    .app__navigationbar-items{
+        margin: 1px;
+     
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 10%;
+        width: 10%;
+        background-color: rgba(191, 201, 191, 0.55);
+        // chat-button  h-14 cursor-pointer hover:scale-110 rounded
+    }
+}
+.main-content {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    flex: 1; /* Allow the main content to take the remaining space */
+    padding: 2px; /* Add padding for the main content */
+    background-color: #fff; /* Adjust according to your design */
+    // overflow-y: auto; /* Enable scrolling if content overflows */
+   
+}

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import UserMessagecard from "./UserMessagecard";
+import UserMessagecard from "../UserMessageCard/UserMessageCard";
 import { motion } from "framer-motion";
+import '../Userlist/Userlist.scss';
 
 const Userlist = () => {
   const loggedInUser = useSelector((state) => state.user);
@@ -14,16 +15,16 @@ const Userlist = () => {
       return;
     }
 
-    console.log("Fetching conversations for:", loggedInUser);
-
     socketconnection.emit("get_conversation", loggedInUser._id);
-    socketconnection.on("all_conversations", (data) => {
-      console.log("All conversations received:", data);
+    
+    const handleConversations = (data) => {
       setAllusers(data);
-    });
+    };
+    
+    socketconnection.on("all_conversations", handleConversations);
 
     return () => {
-      socketconnection.off("all_conversations");
+      socketconnection.off("all_conversations", handleConversations);
     };
   }, [loggedInUser, socketconnection]);
 
@@ -39,22 +40,22 @@ const Userlist = () => {
         </p>
       </div>
 
-        {/* User List */}
+      {/* User List */}
       {allusers.length > 0 ? (
         <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
         >
-          <div>
-          {allusers.map((user) => (
-            <UserMessagecard key={user.sender} user={user} />
+          {console.log("All users:", allusers)
+          }
+          {allusers.map((user, index) => (
+            <div className="app__userlist_users" key={`${user.sender}-${index}`}>
+              <UserMessagecard user={user} />           
+            </div>
           ))}
-      </div>
         </motion.div>
-      ) 
-      : (
+      ) : (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

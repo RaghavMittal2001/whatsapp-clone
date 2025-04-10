@@ -77,12 +77,7 @@ button:focus-visible {
   height: 100vh; 
 }
 
-.sidebar {
-  width: 28%; /* Fixed sidebar width */
-  background-color: #f4f4f4; /* Adjust according to your design */
-  padding: 5px; /* Add padding for content inside the sidebar */
-  height:100vh;
-}
+
 
 .main-content {
   flex-grow: 1; /* Content area takes the remaining space */

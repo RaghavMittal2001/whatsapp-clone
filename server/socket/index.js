@@ -106,46 +106,85 @@ io.on("connection", async (socket) => {
       ).populate("messages");
       console.log("Updated conversation:", updatedConversation);
       // Emit updated conversation to both sender and receiver
-      io.to(data.receiver).emit("all_message", { conversation: updatedConversation });
-      io.to(data.sender).emit("all_message", { conversation: updatedConversation });
-    });
-
-    // Fetch all previous conversations of the logged-in user
-    socket.on("get_conversation", async (data) => {
-      const current_conversations = await Conversation.find({
-        $or: [{ sender: data }, { receiver: data}],
-      }).populate("messages");
-      const conversations = current_conversations.map((conversation) => {
-        const countUnseenMsg = conversation.messages.reduce((prev, curr) => prev + (curr.seen ? 0 : 1), 0);
-        return {
-          _id: conversation._id,
-          receiver: conversation.receiver,
-          sender: conversation.sender,
-          unseenMsg: countUnseenMsg,
-          lastMsg: conversation.messages[conversation.messages.length - 1],
-        };
+      io.to(data.receiver).emit("all_message", {
+        conversation: updatedConversation,
       });
-      socket.emit("all_conversations", conversations);
+      io.to(data.sender).emit("all_message", {
+        conversation: updatedConversation,
+      });
     });
- 
-    // Get user details of receiver
-    socket.on("get_user", async (receiverId) => {
-      const userDetails = await User.findById(receiverId).select("-password");
-      if (!userDetails) {
-        console.log("User not found:", receiverId);
-        return;
+    socket.on("get_conversation", async (data) => {
+      try {
+        // Get conversations with populated messages
+        const current_conversations = await Conversation.find({
+          $or: [{ sender: data }, { receiver: data }],
+        }).populate("messages");
+    
+        // First map - convert conversations to the format you need (no async here)
+        const conversations = current_conversations.map((conversation) => {
+          const countUnseenMsg = conversation.messages.reduce(
+            (prev, curr) => prev + (curr.seen ? 0 : 1),
+            0
+          );
+    
+          return {
+            _id: conversation._id,
+            receiver: conversation.receiver,
+            sender: conversation.sender,
+            unseenMsg: countUnseenMsg,
+            lastMsg: conversation.messages[conversation.messages.length - 1] || { text: "" },
+          };
+        });
+    
+        // Process each conversation sequentially with Promise.all
+        const conversationsWithDetails = await Promise.all(
+          conversations.map(async (conversation) => {
+            console.log("Processing conversation:", conversation.sender);
+            const userDetails = await User.findById(conversation.sender).select("-password");
+            
+            if (!userDetails) {
+              console.log("User not found:", conversation.sender);
+              return conversation; // Return the original conversation if user not found
+            }
+    
+            // Return a new object with user details added
+            return {
+              ...conversation,
+              senderDetails: {
+                _id: userDetails._id,
+                name: userDetails.name,
+                email: userDetails.email,
+                profile_pic: userDetails.profile_pic,
+                online: onlineUsers.has(conversation.sender),
+              }
+            };
+          })
+        );
+    
+        console.log("All conversations with user details:", conversationsWithDetails);
+        socket.emit("all_conversations", conversationsWithDetails);
+      } catch (error) {
+        console.error("Error in get_conversation handler:", error);
+        socket.emit("error", { message: "Failed to fetch conversations" });
       }
-
-      const payload = {
-        _id: userDetails._id,
-        name: userDetails.name,
-        email: userDetails.email,
-        profile_pic: userDetails.profile_pic,
-        online: onlineUsers.has(receiverId),
-      };
-
-      socket.emit("user_details", payload);
     });
+    // // Get user details of receiver
+    // socket.on("get_user", async (receiverId) => {
+    //   const userDetails = await User.findById(receiverId).select("-password");
+    //   if (!userDetails) {
+    //     console.log("User not found:", receiverId);
+    //     return;
+    //   }
+    //   const payload = {
+    //     _id: userDetails._id,
+    //     name: userDetails.name,
+    //     email: userDetails.email,
+    //     profile_pic: userDetails.profile_pic,
+    //     online: onlineUsers.has(receiverId),
+    //   };
+
+    //   socket.emit("user_details", payload);
+    // });
 
     // Handle user disconnection
     socket.on("disconnect", () => {
@@ -160,6 +199,6 @@ io.on("connection", async (socket) => {
     socket.emit("error", { message: err.message });
     socket.disconnect();
   }
-});   
+});
 
 export { app, server };
