@@ -23,8 +23,13 @@ function CheckEmailPage() {
       body: JSON.stringify(data)
     })
     .then(response => {
+      // console.log('response:', response);
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+        
+          throw new Error('Network response was not ok',response.json().then((data) => {
+            console.log('message:',data);
+            return data.message
+          }));
       }
       return response.json();
   })
@@ -63,12 +68,12 @@ function CheckEmailPage() {
     <div>
        <div className='full-screen'>
       <Navbar/>
-      <div className='text-black mt-1' style={{ padding: "2", margin: "4 solid white", fontSize: "xxx-large" }}>
-        <h2 className='mb-4 my-4'>Login Email </h2>
+      <div className='mt-1 text-black' style={{ padding: "2", margin: "4 solid white", fontSize: "xxx-large" }}>
+        <h2 className='my-4 mb-4'>Login Email </h2>
         <form className='flex justify-center text-center' onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
             
-            <div className='form-control mb-2 flex gap-2' style={{fontSize: "xx-large"}}>
+            <div className='flex gap-2 mb-2 form-control' style={{fontSize: "xx-large"}}>
               <label htmlFor="email" className='mx-2' >Email:</label>
               <input type="email" id='email' name='email' onChange={handleonchange} placeholder='Enter your email' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large',padding:'5px' }} />
             </div>

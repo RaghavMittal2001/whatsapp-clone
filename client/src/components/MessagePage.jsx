@@ -196,7 +196,7 @@ const MessagePage = () => {
                     : "justify-start"
                 }`}
               >
-                <div className="relative max-w-[75%] p-2 rounded-lg">
+                <div className="relative max-w-[100%] p-2 rounded-lg">
                   {/* Tail Effect */}
                   <div
                     className={`absolute w-4 h-4 bg-inherit rotate-45 ${

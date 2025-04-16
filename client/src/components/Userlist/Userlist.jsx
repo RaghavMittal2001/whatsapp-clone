@@ -10,8 +10,15 @@ const Userlist = () => {
   const socketconnection = useSelector((state) => state.user.socketconnection);
 
   useEffect(() => {
+    //check if token is present in local storage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Token not found in local storage."); 
+      return;
+    }
+    // Check if socketconnection and loggedInUser are available before emitting the event
     if (!socketconnection || !loggedInUser?._id) {
-      console.error("Socket connection or user ID is missing.");
+      console.log("Socket connection or user ID is missing.");
       return;
     }
 

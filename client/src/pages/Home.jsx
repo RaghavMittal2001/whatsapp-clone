@@ -40,11 +40,10 @@ function Home() {
     }
   };
 
-  useEffect(() => {
-    fetchUserDetails();
-  }, []);
+  
 
-  useEffect(() => {
+  useEffect(async() => {
+    await fetchUserDetails();
     const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL, {
       withCredentials: true,
       auth: { token: localStorage.getItem("token") },
@@ -62,7 +61,9 @@ function Home() {
     });
 
     socket.on("error", (data) => {
+      if(data && data.message) {
       console.error("Socket error:", data.message);
+      }
       if (data.message === "Token has expired. Please log in again.") {
         navigate("/email"); // Redirect to login page
       }

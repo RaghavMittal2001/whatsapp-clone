@@ -5,7 +5,7 @@ import Usersearchcard from "./Usersearchcard";
 import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
-const Adduser = ({ temp }) => {
+const Adduser = () => {
   const onlineUsers = useSelector((state) => state.user.onlineuser);
   const [searchUser, setSearchUser] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,7 +73,7 @@ const Adduser = ({ temp }) => {
         <input
           id="search"
           type="text"
-          placeholder="Search user by name or email..."
+          placeholder="  Search user by name or email..."
           onChange={(e) => setSearch(e.target.value)}
           value={search}
           className="w-full h-12 text-sm font-medium bg-transparent outline-none px-"
@@ -103,7 +103,7 @@ const Adduser = ({ temp }) => {
               key={user._id}
               user={user}
               profile_pic={user.profile_pic}
-              temp={temp}
+              
             />
           ))}
       </div>

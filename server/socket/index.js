@@ -4,7 +4,7 @@ import http from "http";
 import Getuserdetailfromtoken from "../Helper/Getuserdetailfromtoken.js";
 import User from "../model/User.js";
 import Conversation from "../model/Conversation.js";
-import Message from "../model/Message.js";
+import Message from "../model/Message.js";   
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +25,12 @@ io.on("connection", async (socket) => {
 
   try {
     const user = await Getuserdetailfromtoken(token);
+    if (user.logout) {
+      console.log("User session expired. Disconnecting socket.");
+      socket.emit("error", { message: user.message });
+      socket.disconnect();
+      return;
+    }
     userId = user._id.toString();
 
     socket.join(userId);
@@ -126,7 +132,7 @@ io.on("connection", async (socket) => {
             (prev, curr) => prev + (curr.seen ? 0 : 1),
             0
           );
-    
+
           return {
             _id: conversation._id,
             receiver: conversation.receiver,
@@ -139,8 +145,16 @@ io.on("connection", async (socket) => {
         // Process each conversation sequentially with Promise.all
         const conversationsWithDetails = await Promise.all(
           conversations.map(async (conversation) => {
+            let temp=conversation.sender;
             console.log("Processing conversation:", conversation.sender);
-            const userDetails = await User.findById(conversation.sender).select("-password");
+            // Check if the sender is the current user
+            // If so, set temp to the receiver ID
+            // console.log("Sender ID:", conversation.sender, "Current user ID:", data);
+            if(conversation.sender == data) {
+              temp=conversation.receiver;
+            }
+            // Fetch user details for the sender
+            const userDetails = await User.findById(temp).select("-password");
             
             if (!userDetails) {
               console.log("User not found:", conversation.sender);

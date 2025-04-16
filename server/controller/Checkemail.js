@@ -14,7 +14,7 @@ const Checkemail=async(req,res)=> {
     }
     return res.status(200).json({
         message:"email verified ",
-        succcess:true,
+        succcess:true, 
         data:checkemail
     })
   } catch (error) { 

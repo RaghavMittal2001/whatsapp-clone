@@ -101,26 +101,26 @@ function RegisterPage() {
     <div className='full-screen'>
       <Navbar />
       <Toaster/>
-      <div className='text-black mt-1' style={{ padding: "2", margin: "4 solid white", fontSize: "xxx-large" }}>
+      <div className='mt-1 text-black' style={{ padding: "2", margin: "4 solid white", fontSize: "xxx-large" }}>
         <h2 className='mb-4'>Register Yourself Here!</h2>
         <form className='flex justify-center text-center' onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2">
-            <div className='mb-2 form-control flex gap-2'>
+            <div className='flex gap-2 mb-2 form-control'>
               <label htmlFor="name" className='m-2'>Name:</label>
-              <input required type="text" id='name' name='name' placeholder='Enter your name' onChange={handleonchange} className='px-2' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
+              <input required type="text" id='name' name='name' placeholder='Enter your name' onChange={handleonchange} className='px-2 mx-4' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
             </div>
-            <div className='form-control mb-2 flex gap-2'>
-              <label htmlFor="password" className='mx-2'>Password:</label>
-              <input required type="password" id='password' name='password' placeholder='Enter your password' onChange={handleonchange} style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
+            <div className='flex gap-2 mb-2 form-control'>
+              <label htmlFor="password" className='m-2'>Password:</label>
+              <input required type="password" id='password' name='password' placeholder='Enter your password' onChange={handleonchange} className='' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
             </div>
-            <div className='form-control mb-2 flex gap-2'>
-              <label htmlFor="email" className='mx-2'>Email:</label>
-              <input required type="email" id='email' name='email' placeholder='Enter your email' onChange={handleonchange} style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
+            <div className='flex gap-2 mb-2 form-control'>
+              <label htmlFor="email" className='m-2'>Email :</label>
+              <input required type="email" id='email' name='email' placeholder='Enter your email'  className='mx-4 ' onChange={handleonchange} style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
             </div>
-            <div className='form-control mb-2 flex gap-2'>
+            <div className='flex gap-2 mb-2 form-control'>
               <label htmlFor="profile_pic" className='mx-2'>Profile Photo:</label>
-              <div className='bg-slate inline-flex mx-2 justify-center items-center border rounded hover:bg-green-200 transition duration-300 cursor-pointer' style={{ backgroundColor: "#cbfee3", fontSize: 'medium' }}>
-                <p className='mx-2 border hover:border-primary transition duration-300'>
+              <div className='inline-flex items-center justify-center mx-2 transition duration-300 border rounded cursor-pointer bg-slate hover:bg-green-200' style={{ backgroundColor: "#cbfee3", fontSize: 'medium' }}>
+                <p className='mx-2 transition duration-300 border hover:border-primary'>
                   <input type="file" id='profile_pic' name='profile_pic' onChange={handleUploadFile} style={{ display: 'none' }} />
                   <span onClick={() => document.getElementById('profile_pic').click()}>
                     {uploadPhoto ? uploadPhoto.name : "Upload a photo"}

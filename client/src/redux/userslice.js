@@ -6,6 +6,7 @@ const initialState = {
   email:'',
   profile_pic:'',
   token:'',
+  page:0,//varible to keep track of sidebar page
   onlineuser:[],
   socketconnection:null,
 }
@@ -36,11 +37,14 @@ export const userSlice = createSlice({
     },
     setsocketconnection:(state,action)=>{
       state.socketconnection=action.payload
+    },
+    setpage:(state,action)=>{
+      state.page=action.payload
     }
-  },
+  }, 
 })
 
 // Action creators are generated for each case reducer function
-export const { setuser,settoken,logout ,setonlineuser,setsocketconnection} = userSlice.actions
+export const { setuser,settoken,logout ,setonlineuser,setsocketconnection,setpage} = userSlice.actions
 
 export default userSlice.reducer

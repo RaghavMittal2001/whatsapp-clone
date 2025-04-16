@@ -7,10 +7,15 @@ import Userlist from "../Userlist/Userlist";
 import Adduser from "../Adduser";
 import Editprofile from "../Editprofile";
  import "./Sidebar.scss";
+import Logout from "../Logout/Logout";
+import { useDispatch, useSelector } from "react-redux";
+import { setpage } from "../../redux/userslice";
 
 const Sidebar=()=> {
-  const [temp, setTemp] = useState(0);
-
+  const temp = useSelector((state) => state.user.page);
+  const dispatch = useDispatch();
+  // const [temp, setTemp] = useState(0); // 0: Userlist, 1: Adduser, 2: Editprofile
+ 
   const handleLogout = () => {
     // Logic to clear session, token or logout
     console.log("User logged out");
@@ -22,16 +27,14 @@ const Sidebar=()=> {
       <aside
         className="app__navigationbar"
       >
-        <div className="">
+        <div>
           <div 
-            // to={`/user/chat/${userId}`} // Ensure proper routing if needed
-            className={({ isActive }) =>
-              `  app__navigationbar-items ${
-                isActive ? "bg-gray-200" : ""
-              }`
+            className={
+              `  app__navigationbar-items `
             }
             onClick={() => {
-              setTemp(0);
+
+              dispatch(setpage(0)); // Update the page state in Redux
             }}
             title="Chat"
           >
@@ -39,11 +42,9 @@ const Sidebar=()=> {
           </div>
           <div
             // to="/add-friend" // Ensure routing
-            onClick={() => setTemp(1)}
-            className={({ isActive }) =>
-              `flex justify-center items-center h-14 cursor-pointer hover:scale-110 app__navigationbar-items ${
-                isActive ? "bg-gray-200" : ""
-              }`
+            onClick={() => dispatch(setpage(1))}
+            className={
+              `app__navigationbar-items `
             }
             title="Add Friend"
           >
@@ -54,22 +55,20 @@ const Sidebar=()=> {
         <div>
           <div
             // to="/profile" // Ensure routing
-            onClick={() => setTemp(2)}
-            className={({ isActive }) =>
-              `flex justify-center items-center h-14 cursor-pointer hover:scale-110 app__navigationbar-items${
-                isActive ? "bg-gray-200" : ""
-              }`
-            }
+            onClick={() => dispatch(setpage(2))}
+            className =' app__navigationbar-items'
+             
+       
             title="Edit Profile"
           >
             <FaRegUserCircle color="black" size={40} />
           </div>
-          <button
-            className="flex items-center justify-center cursor-pointer h-14 hover:scale-110 "
-            onClick={handleLogout}
+          <div
+            className =' app__navigationbar-items'
+            onClick={()=> dispatch(setpage(3))} 
           >
             <BiLogOut size={40} />
-          </button>
+          </div>
         </div>
       </aside>
 
@@ -77,6 +76,7 @@ const Sidebar=()=> {
         {temp === 0 && <Userlist />}
         {temp === 1 && <Adduser temp={temp} />}
         {temp === 2 && <Editprofile />}
+        {temp===3 && <Logout/>}
       </main>
     </div>
   );
