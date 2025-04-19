@@ -11,10 +11,10 @@ function CheckPasswordPage() {
   const navigate =useNavigate();
   const location =useLocation();
   const dispatch=useDispatch();
-  // console.log(location.state);
+  // //console.log(location.state);
   useEffect(()=>{
     if ( !location?.state?.name) {
-      console.log('No location, state, or state.name present');
+      //console.log('No location, state, or state.name present');
       navigate('/email');
     }
     else(
@@ -34,7 +34,7 @@ function CheckPasswordPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     // Add your form submission logic here
-    // console.log(data);
+    // //console.log(data);
     const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/LoginPassword`;
     await fetch(url, {
       method: "POST",
@@ -51,11 +51,11 @@ function CheckPasswordPage() {
         return response.json();
       })
       .then((data) => {
-        // console.log("data :", data);
+        // //console.log("data :", data);
         if (data.error) toast.error(data.message);
         else {
           toast.success(data.message);
-          console.log(data)
+          //console.log(data)
           dispatch(setuser({
             _id:data.data._id,
             name:data.data.name,
@@ -68,11 +68,11 @@ function CheckPasswordPage() {
         }
       })
       .catch((err) => {
-        console.log("err:", err);
+        //console.log("err:", err);
         toast.error();
       });
       
-    console.log("Form submitted");
+    //console.log("Form submitted");
 
   };
   const handleonchange = (e) => {

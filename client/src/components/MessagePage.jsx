@@ -43,9 +43,9 @@ const MessagePage = () => {
   }, [allmessage, message]);
   const handlesendmessage = (event) => {
     event.preventDefault();
-    console.log("Message:", message);
+    //console.log("Message:", message);
     //log params userId
-    console.log("params.userId", params.userId);
+    //console.log("params.userId", params.userId);
     if (message.text || message.videoUrl || message.imageUrl) {
       if (socketconnection) {
         socketconnection.emit("new_message", {
@@ -57,7 +57,7 @@ const MessagePage = () => {
         });
 
         const handleMessage = (data) => {
-          console.log("new message", data.conversation.messages);
+          //console.log("new message", data.conversation.messages);
           setallmessage(data.conversation.messages);
         };
         setmessage({ text: "", videoUrl: "", imageUrl: "" });
@@ -67,7 +67,7 @@ const MessagePage = () => {
           socketconnection.off("all_message");
         };
       } else {
-        console.error("No socket connection!");
+        //console.error("No socket connection!");
       }
     }
   };
@@ -84,7 +84,7 @@ const MessagePage = () => {
       const uploadedPhoto = await UploadFile(file);
       setmessage((prev) => ({ ...prev, imageUrl: uploadedPhoto.url }));
     } catch (error) {
-      console.error(error.message);
+      //console.error(error.message);
     } finally {
       setloading(false);
     }
@@ -108,7 +108,7 @@ const MessagePage = () => {
       const uploadedVideo = await UploadFile(file);
       setmessage((prev) => ({ ...prev, videoUrl: uploadedVideo.url }));
     } catch (error) {
-      console.error(error.message);
+      //console.error(error.message);
     } finally {
       setloading(false);
     }
@@ -123,11 +123,11 @@ const MessagePage = () => {
   };
   // Function to handle user details
   const handleMessageUser = (data) => {
-    console.log("Received user details:", data);
+    //console.log("Received user details:", data);
     setdatauser(data);
   };
   const handleRefreshPage = (data) => {
-    console.log("Received all messages:", data.conversation.messages);
+    //console.log("Received all messages:", data.conversation.messages);
     setallmessage(data.conversation.messages);
   };
   useEffect(() => {

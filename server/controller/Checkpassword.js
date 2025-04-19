@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 const Checkpassword=async(req,res)=>{
     try {
         const { userid ,password }=req.body; 
-        console.log(userid,"i am in check password in server");
+        //console.log(userid,"i am in check password in server");
         const user = await User.findOne({ _id:userid });
         if (!user) {
             return res.status(404).json({ 

@@ -18,7 +18,7 @@ function RegisterPage() {
 
 
     const { name, value } = e.target;
-    // console.log(data);
+    // //console.log(data);
     setData((prev) => {
       return {
         ...prev,
@@ -65,7 +65,7 @@ function RegisterPage() {
     event.preventDefault();
 
     // Add your form submission logic here
-    // console.log(data);
+    // //console.log(data);
     const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/register`;
     await fetch(url, {
       method: "POST",
@@ -81,7 +81,7 @@ function RegisterPage() {
       return response.json();
   })
     .then((data )=> {
-      console.log('data :', data)
+      //console.log('data :', data)
       if(data.error)
         toast.error(data.message)
       else
@@ -91,10 +91,10 @@ function RegisterPage() {
       }
     })
     .catch(err => {
-      console.log('err:', err)
+      //console.log('err:', err)
       toast.error()
     });
-    console.log("Form submitted");
+    //console.log("Form submitted");
   };
 
   return (

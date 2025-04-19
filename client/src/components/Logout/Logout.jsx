@@ -10,7 +10,7 @@ const Logout = () => {
         // Logic to clear session, token or logout
         dispatch(logout());
         localStorage.removeItem("token"); // Clear token from local storage
-        console.log("User logged out");
+        //console.log("User logged out");
         Navigate("/email"); // Redirect to login page (if applicable)
         // Redirect to login page (if applicable)
       } 

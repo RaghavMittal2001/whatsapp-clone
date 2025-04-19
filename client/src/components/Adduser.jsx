@@ -39,7 +39,7 @@ const Adduser = () => {
       }
     } catch (err) {
       setLoading(false);
-      console.error("Error fetching users:", err);
+      //console.error("Error fetching users:", err);
       toast.error("Something went wrong! Please try again.");
     }
   }, [search]);
@@ -58,8 +58,8 @@ const Adduser = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [search, handleSearchUser]);
 
-  console.log("Online Users:", onlineUsers);
-  console.log("Search Results:", searchUser);
+  //console.log("Online Users:", onlineUsers);
+  //console.log("Search Results:", searchUser);
 
   return (
     <div className="p-4 bg-white rounded shadow-md">

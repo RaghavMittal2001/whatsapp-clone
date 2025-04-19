@@ -24,7 +24,7 @@ const Registeruser= async(req,res)=>{
         }
         const user = new User(payload);
         const usersave=await user.save();
-        console.log(user);
+        //console.log(user);
         return res.status(201).json({
             message:"User created succeesfully ",
             data:usersave,
