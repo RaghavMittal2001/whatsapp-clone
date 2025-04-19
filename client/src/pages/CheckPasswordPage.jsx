@@ -35,7 +35,7 @@ function CheckPasswordPage() {
     event.preventDefault();
     // Add your form submission logic here
     // //console.log(data);
-    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/LoginPassword`;
+    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/LoginPassword`;
     await fetch(url, {
       method: "POST",
       headers: {
@@ -90,21 +90,21 @@ function CheckPasswordPage() {
         <Navbar />
 
         <div
-          className="text-black mt-1"
+          className="mt-1 text-black"
           style={{
             padding: "2",
             margin: "4 solid white",
             fontSize: "xxx-large",
           }}
         >
-          <h2 className="mb-4 my-4">Login Password </h2>
+          <h2 className="my-4 mb-4">Login Password </h2>
           <form
             className="flex justify-center text-center"
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col gap-2">
               <div
-                className="form-control mb-2 flex gap-2"
+                className="flex gap-2 mb-2 form-control"
                 style={{ fontSize: "xx-large" }}
               >
                 <label htmlFor="Password" className="mx-2">
@@ -128,7 +128,7 @@ function CheckPasswordPage() {
               </button>
             </div>
           </form>
-          <p style={{fontSize:"x-large"}} className="my-3 mt-1 text-center">New User ? <Link className="hover:underline transition duration-300 cursor-pointer" to={"/register"} >Register</Link></p>
+          <p style={{fontSize:"x-large"}} className="my-3 mt-1 text-center">New User ? <Link className="transition duration-300 cursor-pointer hover:underline" to={"/register"} >Register</Link></p>
         </div>
       </div>
     </div>

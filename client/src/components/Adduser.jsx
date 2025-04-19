@@ -21,7 +21,7 @@ const Adduser = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/searchuser`,
+        `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/searchuser`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

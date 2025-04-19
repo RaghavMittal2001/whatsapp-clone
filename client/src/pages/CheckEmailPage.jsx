@@ -14,7 +14,7 @@ function CheckEmailPage() {
 
     // Add your form submission logic here
     // //console.log(data);
-    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/LoginEmail`;
+    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/LoginEmail`;
     await fetch(url, {
       method: "POST",
       headers: {

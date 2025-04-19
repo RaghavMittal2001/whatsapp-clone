@@ -12,39 +12,37 @@ function Home() {
 
   //console.log("User State:", userState);
 
-  // Fetch user details
-  const fetchUserDetails = async () => {
-    try {
-      const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/userDetails`;
-      const response = await fetch(url, { credentials: "include" });
-      const data = await response.json();
-
-      //console.log("Current user details:", data);
-
-      if (data?.data?.logout) {
-        //console.error(data.data.message);
-        navigate("/email");
-        return;
-      }
-
-      dispatch(setuser({
-        _id: data.data._id,
-        name: data.data.name,
-        email: data.data.email,
-        profile_pic: data.data.profile_pic,
-      }));
-      dispatch(settoken(data.token));
-      
-    } catch (error) {
-      //console.error("Error fetching user details:", error);
-    }
-  };
-
   
-
-  useEffect(async() => {
-    await fetchUserDetails();
-    const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL, {
+  useEffect(() => {
+// Fetch user details
+    const fetchUserDetails = async () => {
+      try {
+        const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/userDetails`;
+        const response = await fetch(url, { credentials: "include" });
+        const data = await response.json();
+  
+        //console.log("Current user details:", data);
+  
+        if (data?.data?.logout) {
+          //console.error(data.data.message);
+          navigate("/email");
+          return;
+        }
+  
+        dispatch(setuser({
+          _id: data.data._id,
+          name: data.data.name,
+          email: data.data.email,
+          profile_pic: data.data.profile_pic,
+        }));
+        dispatch(settoken(data.token));
+        
+      } catch (error) {
+        //console.error("Error fetching user details:", error);
+      }
+    };
+     fetchUserDetails();
+    const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, ''), {
       withCredentials: true,
       auth: { token: localStorage.getItem("token") },
     });

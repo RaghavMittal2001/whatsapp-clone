@@ -66,7 +66,7 @@ function RegisterPage() {
 
     // Add your form submission logic here
     // //console.log(data);
-    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL}/api/register`;
+    const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/register`;
     await fetch(url, {
       method: "POST",
       headers: {
