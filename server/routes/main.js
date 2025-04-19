@@ -3,7 +3,7 @@ const router = express.Router();
 import Registeruser from "../controller/RegisterUser.js"; //importing Registeruser controller
 import Checkemail from "../controller/Checkemail.js"; //importing Checkemail controller
 import Checkpassword from "../controller/Checkpassword.js"; //importing Checkpassword controller
-import Userdetails from "../controller/UserDetails.js"; //importing Userdetails controller
+import Userdetails from "../controller/Userdetails.js"; //importing Userdetails controller
 import Logout from "../controller/Logout.js"; //importing Logout controller
 import UpdateUser from "../controller/Updateuserdetails.js"; //importing UpdateUser controller
 import Searchuser from "../controller/Searchuser.js"; //importing Searchuser controller
