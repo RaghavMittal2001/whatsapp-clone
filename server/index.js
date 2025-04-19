@@ -10,10 +10,10 @@ dotenv.config();
 
 // const app =express();
 connectDB();
-app.use(cors({   
-    origin :process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
-    methods:["GET","POST"],
-    credentials:true
+app.use(cors({
+    origin: 'https://whatsapp-clone-bay-three.vercel.app', // Allow this specific origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    credentials: true // Allow credentials if needed
 }));
 app.use(express.json());
 app.use(cookieParser())
@@ -28,4 +28,4 @@ app.get('/', (req, res) => {
 app.use('/api',router);
 server.listen(port, () => { 
     //console.log(`Server is running on http://localhost:${port}`);
-}); 
+});
