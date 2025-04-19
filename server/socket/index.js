@@ -13,6 +13,8 @@ const io = new Server(server, {
     origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
     methods: ["GET", "POST"],
     credentials: true,
+      reconnect: true,  
+    transports: ["websocket", "polling"],
   },
 });
 

@@ -55,7 +55,7 @@ function CheckPasswordPage() {
         if (data.error) toast.error(data.message);
         else {
           toast.success(data.message);
-          //console.log(data)
+          console.log(data)
           dispatch(setuser({
             _id:data.data._id,
             name:data.data.name,
