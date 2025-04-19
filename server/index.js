@@ -11,7 +11,7 @@ dotenv.config();
 // const app =express();
 connectDB();
 app.use(cors({   
-    origin :process.env.Frontend_URL,
+    origin :process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app/",
     credentials:true
 }));
 app.use(express.json());
