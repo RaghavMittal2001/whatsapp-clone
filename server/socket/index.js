@@ -11,10 +11,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-      reconnect: true,  
-    transports: ["websocket", "polling"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   },
 });
 

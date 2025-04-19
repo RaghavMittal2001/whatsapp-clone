@@ -45,6 +45,9 @@ function Home() {
     const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, ''), {
       withCredentials: true,
       auth: { token: localStorage.getItem("token") },
+      reconnectionAttempts: 5,
+  timeout: 10000,
+  transports: ['polling', 'websocket']
     });
 
     socket.on("onlineuser", (data) => {
