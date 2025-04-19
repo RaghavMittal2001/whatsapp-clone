@@ -13,22 +13,28 @@ const io = new Server(server, {
     origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
   },
 });
 
 const onlineUsers = new Set();
 
 io.on("connection", async (socket) => {
-  //console.log("User connected:", socket.id);
-
   const token = socket.handshake.auth.token;
+
+  if (!token) {
+    console.error("Missing authentication token");
+    socket.emit("error", { message: "Authentication token is required" });
+    socket.disconnect();
+    return;
+  }
+
   let userId;
 
   try {
     const user = await Getuserdetailfromtoken(token);
     if (user.logout) {
-      //console.log("User session expired. Disconnecting socket.");
+      console.error("Invalid or expired token");
       socket.emit("error", { message: user.message });
       socket.disconnect();
       return;
@@ -39,8 +45,6 @@ io.on("connection", async (socket) => {
     onlineUsers.add(userId);
     io.emit("onlineuser", Array.from(onlineUsers));
 
-    //console.log("User joined room:", userId);
-
     // Clean up old event listeners before adding new ones
     socket.removeAllListeners("message_page");
     socket.removeAllListeners("new_message");
@@ -48,11 +52,19 @@ io.on("connection", async (socket) => {
     socket.removeAllListeners("get_user");
     socket.removeAllListeners("Get_last_message");
 
+    
+    socket.on("connect_error", (err) => {
+      console.error("Socket.IO connection error:", err.message);
+    });
+    
+    socket.on("error", (err) => {
+      console.error("Socket.IO error:", err);
+    });
+
     // Get user details and conversation of receiver requested from sender
     socket.on("message_page", async (receiverId) => {
       const userDetails = await User.findById(receiverId).select("-password");
       if (!userDetails) {
-        //console.log("User not found:", receiverId);
         return;
       }
 
@@ -79,8 +91,6 @@ io.on("connection", async (socket) => {
 
     // New message from sender to receiver
     socket.on("new_message", async (data) => {
-      //console.log("New message received:", data);
-
       let messageConversation = await Conversation.findOne({
         $or: [
           { sender: data.sender, receiver: data.receiver },
@@ -90,7 +100,6 @@ io.on("connection", async (socket) => {
 
       // If conversation does not exist, create a new one
       if (!messageConversation) {
-        //console.log("Creating new conversation...");
         messageConversation = await new Conversation({
           sender: data.sender,
           receiver: data.receiver,
@@ -112,7 +121,7 @@ io.on("connection", async (socket) => {
         { $push: { messages: newMessage._id } },
         { new: true }
       ).populate("messages");
-      //console.log("Updated conversation:", updatedConversation);
+
       // Emit updated conversation to both sender and receiver
       io.to(data.receiver).emit("all_message", {
         conversation: updatedConversation,
@@ -148,10 +157,6 @@ io.on("connection", async (socket) => {
         const conversationsWithDetails = await Promise.all(
           conversations.map(async (conversation) => {
             let temp=conversation.sender;
-            //console.log("Processing conversation:", conversation.sender);
-            // Check if the sender is the current user
-            // If so, set temp to the receiver ID
-            // //console.log("Sender ID:", conversation.sender, "Current user ID:", data);
             if(conversation.sender == data) {
               temp=conversation.receiver;
             }
@@ -159,7 +164,6 @@ io.on("connection", async (socket) => {
             const userDetails = await User.findById(temp).select("-password");
             
             if (!userDetails) {
-              //console.log("User not found:", conversation.sender);
               return conversation; // Return the original conversation if user not found
             }
     
@@ -177,42 +181,22 @@ io.on("connection", async (socket) => {
           })
         );
     
-        //console.log("All conversations with user details:", conversationsWithDetails);
         socket.emit("all_conversations", conversationsWithDetails);
       } catch (error) {
-        //console.error("Error in get_conversation handler:", error);
         socket.emit("error", { message: "Failed to fetch conversations" });
       }
     });
-    // // Get user details of receiver
-    // socket.on("get_user", async (receiverId) => {
-    //   const userDetails = await User.findById(receiverId).select("-password");
-    //   if (!userDetails) {
-    //     //console.log("User not found:", receiverId);
-    //     return;
-    //   }
-    //   const payload = {
-    //     _id: userDetails._id,
-    //     name: userDetails.name,
-    //     email: userDetails.email,
-    //     profile_pic: userDetails.profile_pic,
-    //     online: onlineUsers.has(receiverId),
-    //   };
-
-    //   socket.emit("user_details", payload);
-    // });
 
     // Handle user disconnection
     socket.on("disconnect", () => {
-      //console.log("User disconnected:", socket.id);
       if (userId) {
         onlineUsers.delete(userId);
         io.emit("onlineuser", Array.from(onlineUsers));
       }
     });
   } catch (err) {
-    //console.error("Socket authentication error:", err.message);
-    socket.emit("error", { message: err.message });
+    console.error("Socket authentication error:", err.message);
+    socket.emit("error", { message: "Authentication failed" });
     socket.disconnect();
   }
 });
