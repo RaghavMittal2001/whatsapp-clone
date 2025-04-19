@@ -10,7 +10,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app/",
+    origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
