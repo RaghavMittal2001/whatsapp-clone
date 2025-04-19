@@ -1,11 +1,11 @@
 import express from 'express';
 import Checkemail from '../controller/Checkemail.js';
 import Checkpassword from '../controller/Checkpassword.js';
-import Registeruser from '../controller/Registeruser.js';
 import Userdetails from '../controller/Userdetails.js';
 import Logout from '../controller/Logout.js';
 import UpdateUser from '../controller/Updateuserdetails.js';
 import Searchuser from '../controller/searchuser.js';
+import Registeruser from '../controller/RegisterUser.js';
 
 const router= express.Router();
 
