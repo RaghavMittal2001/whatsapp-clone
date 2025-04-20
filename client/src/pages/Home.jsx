@@ -21,7 +21,7 @@ function Home() {
         const response = await fetch(url, { credentials: "include" });
         const data = await response.json();
   
-        //console.log("Current user details:", data);
+        console.log("Current user details:", data);
   
         if (data?.data?.logout) {
           //console.error(data.data.message);
