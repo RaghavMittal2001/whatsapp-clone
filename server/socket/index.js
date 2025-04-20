@@ -10,7 +10,17 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.Frontend_URL || "https://whatsapp-clone-bay-three.vercel.app",
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://whatsapp-clone-bay-three.vercel.app",
+        "https://whatsappclone-orcin.vercel.app",
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
