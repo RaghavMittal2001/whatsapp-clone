@@ -44,7 +44,7 @@ const UserMessagecard = ({ user }) => {
       {/* User Details */}
       <div className="flex-1">
         <h3 className="text-lg font-semibold text-gray-900 truncate dark:text-gray-100">
-          {//console.log(currentuser)
+          {console.log(currentuser)
           }
           {currentuser?.name || "Unknown User"}
         </h3>

@@ -10,7 +10,7 @@ function Home() {
   const dispatch = useDispatch();
   const userState = useSelector((state) => state.user);
 
-  //console.log("User State:", userState);
+  console.log("User State:", userState);
   const fetchUserDetails = async () => {
     try {
       const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/userDetails`;
@@ -20,7 +20,7 @@ function Home() {
       console.log("Current user details:", data);
 
       if (data?.data?.logout) {
-        //console.error(data.data.message);
+        console.error(data.data.message);
         navigate("/email");
         return;
       }
@@ -34,7 +34,7 @@ function Home() {
       dispatch(settoken(data.token));
       
     } catch (error) {
-      //console.error("Error fetching user details:", error);
+      console.error("Error fetching user details:", error);
     }
   };
   
@@ -49,19 +49,19 @@ function Home() {
     });
 
     socket.on("onlineuser", (data) => {
-      //console.log("Online Users:", data);
+      console.log("Online Users:", data);
       dispatch(setonlineuser(data));
     });
 
     dispatch(setsocketconnection(socket));
 
     socket.on("connect", () => {
-      //console.log("Connected to server:", socket.id);
+      console.log("Connected to server:", socket.id);
     });
 
     socket.on("error", (data) => {
       if(data && data.message) {
-      //console.error("Socket error:", data.message);
+      console.error("Socket error:", data.message);
       }
       if (data.message === "Token has expired. Please log in again.") {
         navigate("/email"); // Redirect to login page
@@ -69,12 +69,12 @@ function Home() {
     });
 
     socket.on("disconnect", () => {
-      //console.log("Disconnected from server");
+      console.log("Disconnected from server");
     });
 
     return () => {
       socket.disconnect();
-      //console.log("Socket connection closed");
+      console.log("Socket connection closed");
     };
   }, []);
 

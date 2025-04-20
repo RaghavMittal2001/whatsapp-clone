@@ -18,7 +18,7 @@ const Sidebar=()=> {
  
   const handleLogout = () => {
     // Logic to clear session, token or logout
-    //console.log("User logged out");
+    console.log("User logged out");
     // Redirect to login page (if applicable)
   };
 

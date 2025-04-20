@@ -13,7 +13,7 @@ const Getuserdetailfromtoken=async(token)=> {
     // const user = jwt.verify(token, process.env.JWT_SECRET);
     const decode =jwt.verify(token,process.env.Jwt_Secret_Key);
     const user= await User.findOne({_id:decode.id}).select("-password");
-    //   //console.log(user);
+   console.log(user);
     
     if (!user) {
       return {
@@ -25,13 +25,13 @@ const Getuserdetailfromtoken=async(token)=> {
     
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
-      //console.error('JWT expired:', err.expiredAt);
+      console.error('JWT expired:', err.expiredAt);
       return {
         message: "Token has expired. Please log in again.",
         logout: true,
       };
     }
-    //console.error("Invalid token:", err.message);
+    console.error("Invalid token:", err.message);
     return {
       message: "Invalid token. Please log in again.",
       logout: true,

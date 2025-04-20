@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 
 const Editprofile = () => {
   const user =useSelector ((state) => state.user);
-  //console.log("User State:", user);
+  console.log("User State:", user);
   return (
     <div>
       

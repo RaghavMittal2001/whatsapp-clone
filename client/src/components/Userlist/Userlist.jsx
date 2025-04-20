@@ -13,12 +13,12 @@ const Userlist = () => {
     //check if token is present in local storage
     const token = localStorage.getItem("token");
     if (!token) {
-      //console.log("Token not found in local storage."); 
+      console.log("Token not found in local storage."); 
       return;
     }
     // Check if socketconnection and loggedInUser are available before emitting the event
     if (!socketconnection || !loggedInUser?._id) {
-      //console.log("Socket connection or user ID is missing.");
+      console.log("Socket connection or user ID is missing.");
       return;
     }
 
@@ -54,7 +54,7 @@ const Userlist = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
         >
-          {//console.log("All users:", allusers)
+          {console.log("All users:", allusers)
           }
           {allusers.map((user, index) => (
             <div className="app__userlist_users" key={`${user.sender}-${index}`}>
