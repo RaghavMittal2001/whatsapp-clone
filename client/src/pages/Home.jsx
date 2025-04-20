@@ -40,12 +40,16 @@ function Home() {
   
   useEffect(() => {
 // Fetch user details
-    
-     fetchUserDetails();
+const setupConnection = async () => {
+  await fetchUserDetails();
+  // Socket setup should be moved here if it depends on fetchUserDetails results
+};
+
+setupConnection();
     const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, ''), {
       withCredentials: true,
       auth: { token: localStorage.getItem("token") },
-  transports: ['polling', 'websocket']
+  transports: ['polling']
     });
 
     socket.on("onlineuser", (data) => {
@@ -58,7 +62,9 @@ function Home() {
     socket.on("connect", () => {
       console.log("Connected to server:", socket.id);
     });
-
+    socket.on("connect_error", (error) => {
+      console.error("Connection error:", error.message);
+    });
     socket.on("error", (data) => {
       if(data && data.message) {
       console.error("Socket error:", data.message);

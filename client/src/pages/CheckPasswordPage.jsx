@@ -69,7 +69,7 @@ function CheckPasswordPage() {
       })
       .catch((err) => {
         console.log("err:", err);
-        toast.error();
+        toast.error(err.message || "Error logging in. Please try again.");
       });
       
     console.log("Form submitted");

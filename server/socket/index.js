@@ -193,7 +193,7 @@ io.on("connection", async (socket) => {
     
         socket.emit("all_conversations", conversationsWithDetails);
       } catch (error) {
-        socket.emit("error", { message: "Failed to fetch conversations" });
+        socket.emit("error", { message: "Failed to fetch conversations" },error);
       }
     });
 
