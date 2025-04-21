@@ -13,7 +13,7 @@ const io = new Server(server, {
     origin: (origin, callback) => {
       const allowedOrigins = [
         "https://whatsapp-clone-bay-three.vercel.app",
-        "https://whatsappclone-orcin.vercel.app",
+        "https://whatsapp-clone-6w1i.onrender.com/",
       ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
