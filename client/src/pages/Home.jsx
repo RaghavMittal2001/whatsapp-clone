@@ -14,7 +14,13 @@ function Home() {
   const fetchUserDetails = async () => {
     try {
       const url = `${import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, '')}/api/userDetails`;
-      const response = await fetch(url, { credentials: "include" });
+      const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
 
       console.log("Current user details:", data);

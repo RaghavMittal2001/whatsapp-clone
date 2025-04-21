@@ -31,6 +31,7 @@ const port=process.env.PORT || 8000;
 
 
 app.get('/', (req, res) => { 
+    res.header('Access-Control-Allow-Origin', 'https://whatsapp-clone-bay-three.vercel.app');
     res.send('Hello, World!');
 });
 
