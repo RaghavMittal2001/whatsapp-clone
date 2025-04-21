@@ -75,7 +75,7 @@ const setupConnection = async () => {
     withCredentials: true,
     auth: {
       token: authtoken },
-        transports: ['polling','websocket']
+        transports: ['polling']
       });
       
       socket.on("onlineuser", (data) => {
