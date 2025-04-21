@@ -52,10 +52,17 @@ const setupConnection = async () => {
 };
 
 setupConnection();
+const authtoken = userState.token || localStorage.getItem("token");
+console.log("Auth token for socket connection:", authtoken ? `${authtoken.substring(0, 10)}...` : "No token")
+if (!authtoken) {
+  console.error("No auth token available for socket connection");
+  return;
+}
     const socket = io(import.meta.env.VITE_REACT_APP_BACKEND_URL.replace(/\/$/, ''), {
       withCredentials: true,
-      auth: { token: localStorage.getItem("token") },
-  transports: ['polling']
+      auth: {
+        token: authtoken },
+  transports: ['polling','websocket']
     });
 
     socket.on("onlineuser", (data) => {
