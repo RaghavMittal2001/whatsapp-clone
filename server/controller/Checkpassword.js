@@ -20,10 +20,10 @@ const Checkpassword=async(req,res)=>{
             }
             const token = jwt.sign(tokendata,process.env.Jwt_Secret_Key,{ expiresIn: '7d' });
             const cookieOptions={
-                http:true,
-                sameSite: 'Strict', // Restrict sending the cookie with cross-site requests
+                httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+                sameSite: 'none', // Restrict sending the cookie with cross-site requests
                 maxAge: 3600000, 
-                secure:true
+                secure: true, // Ensure the cookie is only sent over HTTPS
             }
             return res.cookie('token',token,cookieOptions).status(200).json({
                 message:"Login successfully ",
