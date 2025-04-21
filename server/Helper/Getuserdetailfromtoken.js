@@ -8,7 +8,7 @@ const Getuserdetailfromtoken=async(token)=> {
   if(!token){
     console.log("Token is not present in Getuserdetailfromtoken");
     return {
-        token:false,
+        authtoken:token,
         message:"session out",
         logout:true 
     }
