@@ -4,9 +4,9 @@ import Getuserdetailfromtoken from "../Helper/Getuserdetailfromtoken.js";
 const Userdetails=async(req,res)=> {
   try {
     const token =req.cookies.token || "";
-    
+    console.log("Token in Userdetails:", token);
     const user =await Getuserdetailfromtoken(token);
-    console.log(user);
+    console.log(  "user details",user);
     res.status(200).json({
         message:"user details",
         data:user,
