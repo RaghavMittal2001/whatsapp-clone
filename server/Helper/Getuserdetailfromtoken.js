@@ -3,7 +3,10 @@ import User from "../model/User.js";
 
 
 const Getuserdetailfromtoken=async(token)=> {
+  console.log("Token in Getuserdetailfromtoken:", token);
+  // Check if token is present
   if(!token){
+    console.log("Token is not present in Getuserdetailfromtoken");
     return {
         message:"session out",
         logout:true 
@@ -12,6 +15,8 @@ const Getuserdetailfromtoken=async(token)=> {
   try {
     // const user = jwt.verify(token, process.env.JWT_SECRET);
     const decode =jwt.verify(token,process.env.Jwt_Secret_Key);
+    console.log("Decoded token:", decode);
+    // Check if the token is expired
     const user= await User.findOne({_id:decode.id}).select("-password");
    console.log(user);
     
