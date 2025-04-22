@@ -364,7 +364,7 @@ const MessagePage = () => {
             type="text"
             value={message.text}
             onChange={handleonchange}
-            placeholder="Type here message.."
+            placeholder="Type your message here.."
             className="relative w-full h-10 px-4 py-1 text-black outline-none bg-slate-200"
           />
           <button className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-opacity-80 hover:text-primary">
