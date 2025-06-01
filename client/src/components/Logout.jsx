@@ -1,6 +1,5 @@
 import React from 'react'
-import './Logout.scss';
-import { logout } from '../../redux/userslice';
+import { logout } from '../redux/userslice';
 import { useDispatch } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 const Logout = () => {

@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 // dotenv.config();
 const connectDB = async() =>{
@@ -18,6 +17,7 @@ const connectDB = async() =>{
     
     console.log("Connected to MongoDB");
     const connected=mongoose.connection;
+    console.log(connected);
   
 }
  

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { setonlineuser, setsocketconnection, settoken, setuser } from "../redux/userslice";
-import Sidebar from "../components/Sidebar/Sidebar.jsx";
+import Sidebar from "../components/Sidebar.jsx";
 
 function Home() {
   const navigate = useNavigate();
@@ -113,17 +113,16 @@ const setupConnection = async () => {
   }, []);
 
   return (
-    <div className="flex h-screen home-container">
-      {/* Sidebar */}
-      <aside className="bg-gray-100 dark:bg-gray-900" style={{ width: "25rem" }}>
+    <div className="flex h-screen">
+      {/* Sidebar remains fixed */}
+      <div className="w-[30%] min-w-72 h-full">
         <Sidebar />
-        
-      </aside>
+      </div>
 
-      {/* Main Content */}
-      <main className="flex-grow p-3 bg-white dark:bg-gray-800">
+      {/* Main Content updates dynamically */}
+      <div className="flex-1 h-full">
         <Outlet />
-      </main>
+      </div>
     </div>
   );
 }

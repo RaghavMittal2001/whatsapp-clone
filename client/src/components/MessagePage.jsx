@@ -1,331 +1,436 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import Avatar from "./Avatar";
-import { HiDotsVertical } from "react-icons/hi";
 import { FaImage, FaVideo } from "react-icons/fa6";
-import { GrAttachment } from "react-icons/gr";
 import UploadFile from "../helper/UploadFile";
 import { IoClose } from "react-icons/io5";
 import Loading from "./Loading";
 import background from "../assets/background.jpeg";
-import { IoSendSharp } from "react-icons/io5";
+import {
+  Mic,
+  MoreVertical,
+  Paperclip,
+  Phone,
+  Search,
+  Send,
+  Smile,
+  Video,
+} from "lucide-react";
+import { Input } from "./ui/input";
+import * as Avatar from "@radix-ui/react-avatar";
 
 const MessagePage = () => {
   const params = useParams();
-  const [loading, setloading] = useState(false);
-  const [openuploader, setopenuploader] = useState(false);
-  const socketconnection = useSelector((state) => state.user.socketconnection);
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
+  const [openUploader, setOpenUploader] = useState(false);
+  const socketConnection = useSelector((state) => state.user.socketconnection);
   const loggedInUser = useSelector((state) => state.user);
-  const [datauser, setdatauser] = useState({
+  
+  const [dataUser, setDataUser] = useState({
     _id: "",
     name: "",
     email: "",
     profile_pic: "",
     online: false,
   });
-  const [allmessage, setallmessage] = useState([]);
-  const currentmessage = useRef(null);
-
-  const [message, setmessage] = useState({
+  
+  const [allMessages, setAllMessages] = useState([]);
+  const [message, setMessage] = useState({
     text: "",
     videoUrl: "",
     imageUrl: "",
   });
+
+  // Memoized values
+  const hasMediaPreview = useMemo(() => 
+    message.imageUrl || message.videoUrl, 
+    [message.imageUrl, message.videoUrl]
+  );
+
+  const canSendMessage = useMemo(() => 
+    message.text.trim() || message.videoUrl || message.imageUrl, 
+    [message.text, message.videoUrl, message.imageUrl]
+  );
+
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (currentmessage.current) {
-      currentmessage.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-        inline: "nearest",
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth"
       });
     }
-  }, [allmessage, message]);
-  const handlesendmessage = (event) => {
+  }, [allMessages]);
+
+  // Memoized event handlers to prevent unnecessary re-renders
+  const handleSendMessage = useCallback((event) => {
     event.preventDefault();
-    console.log("Message:", message);
-    //log params userId
-    console.log("params.userId", params.userId);
-    if (message.text || message.videoUrl || message.imageUrl) {
-      if (socketconnection) {
-        socketconnection.emit("new_message", {
-          sender: loggedInUser._id,
-          receiver: params.userId,
-          text: message.text,
-          videoUrl: message.videoUrl,
-          imageUrl: message.imageUrl,
-        });
-
-        const handleMessage = (data) => {
-          console.log("new message", data.conversation.messages);
-          setallmessage(data.conversation.messages);
-        };
-        setmessage({ text: "", videoUrl: "", imageUrl: "" });
-        socketconnection.on("all_message", handleMessage);
-
-        return () => {
-          socketconnection.off("all_message");
-        };
-      } else {
+    
+    if (!canSendMessage || !socketConnection) {
+      if (!socketConnection) {
         console.error("No socket connection!");
       }
+      return;
     }
-  };
-  // Function to upload photos
-  const handleUploadPhoto = async (event) => {
-    event.preventDefault();
-    setloading(true);
-    setopenuploader(false);
 
-    try {
-      const file = event.target.files[0];
-      if (!file) throw new Error("Invalid image file!");
+    const messageData = {
+      sender: loggedInUser._id,
+      receiver: params.userId,
+      text: message.text.trim(),
+      videoUrl: message.videoUrl,
+      imageUrl: message.imageUrl,
+    };
 
-      const uploadedPhoto = await UploadFile(file);
-      setmessage((prev) => ({ ...prev, imageUrl: uploadedPhoto.url }));
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setloading(false);
-    }
-  };
-  const handleonchange = (event) => {
-    const { name, value } = event.target;
-    setmessage((prev) => {
-      return { ...prev, text: value };
-    });
-  };
-  // Function to upload videos
-  const handleUploadVideo = async (event) => {
-    event.preventDefault();
-    setloading(true);
-    setopenuploader(false);
-
-    try {
-      const file = event.target.files[0];
-      if (!file) throw new Error("Invalid video file!");
-
-      const uploadedVideo = await UploadFile(file);
-      setmessage((prev) => ({ ...prev, videoUrl: uploadedVideo.url }));
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setloading(false);
-    }
-  };
-  // Function to clear uploaded files
-  const handleclearupload = () => {
-    setmessage({
+    socketConnection.emit("new_message", messageData);
+    
+    // Clear message after sending
+    setMessage({
       text: "",
       videoUrl: "",
       imageUrl: "",
     });
-  };
-  // Function to handle user details
-  const handleMessageUser = (data) => {
-    console.log("Received user details:", data);
-    setdatauser(data);
-  };
-  const handleRefreshPage = (data) => {
-    console.log("Received all messages:", data.conversation.messages);
-    setallmessage(data.conversation.messages);
-  };
-  useEffect(() => {
-    if (socketconnection) {
-      socketconnection.emit("message_page", params.userId);
+  }, [canSendMessage, socketConnection, loggedInUser._id, params.userId, message]);
 
-      socketconnection.on("message_user", handleMessageUser);
-      socketconnection.on("all_message", handleRefreshPage)
-      return () => {
-        socketconnection.off("message_user", handleMessageUser);
-        socketconnection.off("all_message", handleRefreshPage);
-      };
+  const handleUploadPhoto = useCallback(async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    setOpenUploader(false);
+
+    try {
+      const uploadedPhoto = await UploadFile(file);
+      setMessage((prev) => ({ 
+        ...prev, 
+        imageUrl: uploadedPhoto.url,
+        videoUrl: "" // Clear video if image is uploaded
+      }));
+    } catch (error) {
+      console.error("Image upload failed:", error.message);
+      // You might want to show a toast notification here
+    } finally {
+      setLoading(false);
+      // Reset file input
+      event.target.value = "";
     }
-  }, [socketconnection, params.userId]);
+  }, []);
+
+  const handleUploadVideo = useCallback(async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    setOpenUploader(false);
+
+    try {
+      const uploadedVideo = await UploadFile(file);
+      setMessage((prev) => ({ 
+        ...prev, 
+        videoUrl: uploadedVideo.url,
+        imageUrl: "" // Clear image if video is uploaded
+      }));
+    } catch (error) {
+      console.error("Video upload failed:", error.message);
+      // You might want to show a toast notification here
+    } finally {
+      setLoading(false);
+      // Reset file input
+      event.target.value = "";
+    }
+  }, []);
+
+  const handleInputChange = useCallback((event) => {
+    setMessage((prev) => ({
+      ...prev,
+      text: event.target.value
+    }));
+  }, []);
+
+  const handleClearUpload = useCallback(() => {
+    setMessage((prev) => ({
+      ...prev,
+      videoUrl: "",
+      imageUrl: "",
+    }));
+  }, []);
+
+  const handleMessageUser = useCallback((data) => {
+    console.log("Received user details:", data);
+    setDataUser(data);
+  }, []);
+
+  const handleRefreshPage = useCallback((data) => {
+    console.log("Received all messages:", data.conversation.messages);
+    setAllMessages(data.conversation.messages);
+  }, []);
+
+  const toggleUploader = useCallback(() => {
+    setOpenUploader(prev => !prev);
+  }, []);
+
+  // Handle Enter key press for sending messages
+  const handleKeyPress = useCallback((event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage(event);
+    }
+  }, [handleSendMessage]);
+
+  // Socket event listeners
+  useEffect(() => {
+    if (!socketConnection || !params.userId) return;
+
+    socketConnection.emit("message_page", params.userId);
+    socketConnection.on("message_user", handleMessageUser);
+    socketConnection.on("all_message", handleRefreshPage);
+
+    return () => {
+      socketConnection.off("message_user", handleMessageUser);
+      socketConnection.off("all_message", handleRefreshPage);
+    };
+  }, [socketConnection, params.userId, handleMessageUser, handleRefreshPage]);
+
+  // Close uploader when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (openUploader) {
+        setOpenUploader(false);
+      }
+    };
+
+    if (openUploader) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openUploader]);
 
   return (
     <div
       style={{ backgroundImage: `url(${background})` }}
-      className="bg-no-repeat bg-cover "
+      className="w-full h-full min-h-screen bg-center bg-no-repeat bg-cover"
     >
       {/* Header */}
-      <header className="sticky top-0 flex items-center justify-between h-16 px-4 rounded bg-secondary">
-        <div className="flex items-center gap-2">
-          <a
-            href={datauser.profile_pic}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Avatar
-              userid={datauser._id}
-              imageurl={datauser.profile_pic}
-              name={datauser.name}
+      <header className="sticky z-20 top-0 flex items-center justify-between p-3 bg-[#f0f2f5] dark:bg-[#202c33] border-l border-[#d1d7db] dark:border-[#8696a0]">
+        <div className="flex items-center">
+          <Avatar.Root className="inline-flex items-center justify-center flex-shrink-0 w-12 h-12 mr-3 overflow-hidden align-middle bg-gray-300 rounded-full">
+            <Avatar.Image 
+              src={dataUser.profile_pic} 
+              alt={dataUser.name}
+              className="object-cover w-full h-full rounded-full"
             />
-          </a>
+            <Avatar.Fallback className="flex items-center justify-center w-full h-full text-sm font-medium text-gray-700 bg-gray-300">
+              {dataUser.name.charAt(0).toUpperCase()}
+            </Avatar.Fallback>
+          </Avatar.Root>
           <div>
-            <h3 className="my-1 text-lg font-semibold text-ellipsis line-clamp-1">
-              {datauser.name}
-            </h3>
-            <p className="-my-1 text-sm">
-              {datauser.online ? (
-                <span className="text-primary">online</span>
-              ) : (
-                <span className="text-slate-400">offline</span>
-              )}
+            <h3 className="text-base font-medium">{dataUser.name}</h3>
+            <p className="text-xs text-[#667781] dark:text-[#8696a0]">
+              {dataUser.online ? "Online" : "Offline"}
             </p>
           </div>
         </div>
-        <button className="cursor-pointer hover:text-primary">
-          <HiDotsVertical />
-        </button>
+        <div className="flex space-x-4">
+          <button className="text-[#54656f] dark:text-[#aebac1] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors">
+            <Search size={20} />
+          </button>
+          <button className="text-[#54656f] dark:text-[#aebac1] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors">
+            <Phone size={20} />
+          </button>
+          <button className="text-[#54656f] dark:text-[#aebac1] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors">
+            <Video size={20} />
+          </button>
+          <button className="text-[#54656f] dark:text-[#aebac1] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors">
+            <MoreVertical size={20} />
+          </button>
+        </div>
       </header>
 
       {/* Messages Section */}
-      <section className="h-[calc(100vh-180px)] overflow-x-hidden overflow-y-scroll scrollbar-hide p-4 bg-slate-200 bg-opacity-5">
-        {/* Placeholder for All messages */}
+      <section
+        className="h-[calc(100vh-165px)] overflow-x-hidden overflow-y-scroll scrollbar-hide p-4 bg-slate-200 bg-opacity-5"
+        style={{
+          backgroundImage: "url('/whatsapp-bg.png')",
+          backgroundSize: "contain",
+        }}
+      >
+        {/* All Messages */}
+        <div className="space-y-3">
+          {allMessages.length > 0 ? (
+            allMessages.map((msg, index) => {
+              const isLast = index === allMessages.length - 1;
+              const isSender = msg.msgby === loggedInUser._id;
 
-        <div className="p-4 space-y-2">
-          {allmessage.length > 0 ? (
-            allmessage.map((msg, index) => (
-              <div
-                ref={currentmessage}
-                key={msg._id || index}
-                className={`flex ${
-                  msg.msgby === loggedInUser._id
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div className="relative max-w-[100%] p-2 rounded-lg">
-                  {/* Tail Effect */}
-                  <div
-                    className={`absolute w-4 h-4 bg-inherit rotate-45 ${
-                      msg.msgby === loggedInUser._id
-                        ? "right-[-5px] bottom-2"
-                        : "left-[-5px] bottom-2"
-                    }`}
-                  ></div>
+              return (
+                <div
+                  key={msg._id || `msg-${index}`}
+                  className={`flex ${isSender ? "justify-end" : "justify-start"}`}
+                >
+                  <div className="relative max-w-[65%] px-3 py-2">
+                    {/* Message Bubble */}
+                    <div
+                      className={`p-3 text-sm rounded-lg shadow-md ${
+                        isSender
+                          ? "bg-[#dcf8c6] text-black rounded-br-none"
+                          : "bg-white text-black rounded-bl-none"
+                      }`}
+                    >
+                      {/* Media Content */}
+                      {(msg.imageUrl || msg.videoUrl) && (
+                        <div className="relative max-w-xs mb-2 space-y-2 md:max-w-sm lg:max-w-md">
+                          {msg.imageUrl && (
+                            <img
+                              src={msg.imageUrl}
+                              alt="Sent"
+                              className="object-cover w-full rounded-lg shadow-md cursor-pointer max-h-60"
+                              onClick={() => window.open(msg.imageUrl, "_blank")}
+                              loading="lazy"
+                            />
+                          )}
+                          {msg.videoUrl && (
+                            <video
+                              src={msg.videoUrl}
+                              controls
+                              className="object-cover w-full rounded-lg shadow-md max-h-60"
+                              preload="metadata"
+                            />
+                          )}
+                        </div>
+                      )}
 
-                  {/* Message Content */}
-                  <div 
-                  ref={currentmessage}
-                    className={`p-2 text-sm rounded-lg shadow ${
-                      msg.msgby === loggedInUser._id
-                        ? "bg-green-500 text-black rounded-br-none" // Sender Bubble
-                        : "bg-gray-200 text-black rounded-bl-none" // Receiver Bubble
-                    }`}
-                  >
-                    <div className="relative max-w-xs p-2 md:max-w-sm lg:max-w-md">
-                      {msg.imageUrl && (
-                        <img
-                          src={msg.imageUrl}
-                          alt="Sent Image"
-                          className="object-cover w-full rounded-lg shadow-md cursor-pointer max-h-60"
-                          onClick={() => window.open(msg.imageUrl, "_blank")} // Open in new tab
-                        />
+                      {/* Text Message */}
+                      {msg.text && (
+                        <p className="break-words whitespace-pre-wrap">
+                          {msg.text}
+                        </p>
                       )}
-                      {msg.videoUrl && (
-                        <video
-                          src={msg.videoUrl}
-                          controls
-                          className="object-cover w-full rounded-lg shadow-md cursor-pointer max-h-60"
-                        />
-                      )}
+
+                      {/* Timestamp */}
+                      <div className="flex justify-end mt-2 text-[0.65rem] text-[#667781] dark:text-[#8696a0]">
+                        {msg.timestamp || new Date(msg.createdAt).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
                     </div>
 
-                    <p>{msg.text}</p>
-                    <p className="mt-1 text-xs text-right text-black text-opacity-50">
-                      {new Date(msg.createdAt).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                    {/* Message Tail */}
+                    <div
+                      className={`absolute w-3 h-3 ${
+                        isSender 
+                          ? "bg-[#dcf8c6] right-[-6px] bottom-4" 
+                          : "bg-white left-[-6px] bottom-4"
+                      }`}
+                      style={{
+                        clipPath: isSender 
+                          ? "polygon(0 0, 100% 0, 0 100%)"
+                          : "polygon(100% 0, 0 0, 100% 100%)"
+                      }}
+                    />
                   </div>
+
+                  {/* Scroll Anchor */}
+                  {isLast && <div ref={messagesEndRef} />}
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <p className="text-center text-gray-500">No messages yet.</p>
+            <div className="flex items-center justify-center h-full">
+              <p className="text-center text-[#667781] dark:text-[#8696a0] text-lg">
+                No messages yet. Start the conversation!
+              </p>
+            </div>
           )}
         </div>
 
-        {/* Uploaded Image Preview */}
-        {message.imageUrl && (
-          <div className="relative flex items-end justify-center w-full overflow-hidden rounded bg-slate-700 bg-opacity-10">
-            <div
-              ref={currentmessage}
-              className="p-3 bg-white rounded-lg shadow-md"
-            >
-              <img
-                src={message.imageUrl}
-                width={300}
-                height={300}
-                alt="Uploaded"
-                className="object-cover rounded-lg"
-              />
-            </div>
-            <button
-              className="absolute text-red-600 top-2 right-2"
-              onClick={handleclearupload}
-            >
-              <IoClose size={30} />
-            </button>
-          </div>
-        )}
+        {/* Media Preview Before Sending */}
+        {hasMediaPreview && (
+          <div className="sticky mt-4 bottom-4">
+            {message.imageUrl && (
+              <div className="relative flex justify-center p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm">
+                <img
+                  src={message.imageUrl}
+                  alt="Preview"
+                  className="object-cover max-w-xs rounded-lg max-h-60"
+                />
+                <button
+                  className="absolute p-1 text-white transition-colors bg-red-500 rounded-full -top-2 -right-2 hover:bg-red-600"
+                  onClick={handleClearUpload}
+                  aria-label="Remove image"
+                >
+                  <IoClose size={20} />
+                </button>
+              </div>
+            )}
 
-        {/* Uploaded Video Preview */}
-        {message.videoUrl && (
-          <div className="relative flex items-end justify-center w-full overflow-hidden rounded bg-slate-800 bg-opacity-30">
-            <div ref={currentmessage} className="p-3 bg-white">
-              <video
-                src={message.videoUrl}
-                width={400}
-                height={400}
-                className="w-full max-w-sm aspect-video"
-                controls
-                muted
-                autoPlay
-              />
-            </div>
-            <button
-              className="absolute text-red-600 top-2 right-2"
-              onClick={handleclearupload}
-            >
-              <IoClose size={30} />
-            </button>
+            {message.videoUrl && (
+              <div className="relative flex justify-center p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm">
+                <video
+                  src={message.videoUrl}
+                  controls
+                  autoPlay
+                  muted
+                  className="w-full max-w-sm rounded-lg aspect-video"
+                />
+                <button
+                  className="absolute p-1 text-white transition-colors bg-red-500 rounded-full -top-2 -right-2 hover:bg-red-600"
+                  onClick={handleClearUpload}
+                  aria-label="Remove video"
+                >
+                  <IoClose size={20} />
+                </button>
+              </div>
+            )}
           </div>
         )}
 
         {/* Loading Indicator */}
         {loading && (
-          <div ref={currentmessage} className="flex justify-center">
-            <Loading size={20} />
+          <div className="flex justify-center mt-4">
+            <div className="p-4 rounded-lg shadow-lg bg-white/90 backdrop-blur-sm">
+              <Loading size={20} />
+              <p className="mt-2 text-sm text-gray-600">Uploading...</p>
+            </div>
           </div>
         )}
       </section>
 
       {/* Message Input & Upload */}
-      <section className="flex items-center h-16 px-4 bg-primary ">
-        <div className="relative">
-          <button
-            onClick={() => setopenuploader(!openuploader)}
-            className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-opacity-80 hover:text-white"
-          >
-            <GrAttachment size={30} />
-          </button>
+      <section className="bg-[#f0f2f5] dark:bg-[#202c33] p-3 flex items-center gap-3 border-t border-[#d1d7db] dark:border-[#8696a0]">
+        {/* Media Controls */}
+        <div className="relative flex items-center">
+          <div className="flex items-center space-x-3">
+            <button 
+              className="text-[#54656f] dark:text-[#8696a0] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors"
+              aria-label="Add emoji"
+            >
+              <Smile size={24} />
+            </button>
+            <button
+              className="text-[#54656f] dark:text-[#8696a0] hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-full transition-colors"
+              onClick={toggleUploader}
+              aria-label="Attach file"
+            >
+              <Paperclip size={24} />
+            </button>
+          </div>
 
-          {openuploader && (
-            <div className="absolute p-2 bg-white rounded shadow bottom-12 w-36">
-              <form>
+          {/* File Upload Menu */}
+          {openUploader && (
+            <div 
+              className="absolute bottom-14 left-0 z-50 w-48 rounded-xl bg-white shadow-xl ring-1 ring-gray-200 dark:bg-[#2a2f32] dark:ring-gray-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-2">
                 <label
                   htmlFor="uploadImage"
-                  className="flex items-center gap-3 p-2 px-2 cursor-pointer hover:bg-slate-200"
+                  className="flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3a3f42] rounded-lg transition-colors"
                 >
-                  <FaImage size={18} className="text-primary" />
-                  <p>Image</p>
+                  <FaImage size={20} className="text-blue-500" />
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    Photo
+                  </span>
                 </label>
                 <input
-                  ref={currentmessage}
                   type="file"
                   id="uploadImage"
                   onChange={handleUploadPhoto}
@@ -336,13 +441,14 @@ const MessagePage = () => {
 
                 <label
                   htmlFor="uploadVideo"
-                  className="flex items-center gap-3 p-2 px-2 cursor-pointer hover:bg-slate-200 "
+                  className="flex items-center gap-3 px-3 py-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-[#3a3f42] rounded-lg transition-colors"
                 >
-                  <FaVideo size={18} className="text-primary" />
-                  <p>Video</p>
+                  <FaVideo size={20} className="text-green-500" />
+                  <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                    Video
+                  </span>
                 </label>
                 <input
-                  ref={currentmessage}
                   type="file"
                   id="uploadVideo"
                   onChange={handleUploadVideo}
@@ -350,27 +456,39 @@ const MessagePage = () => {
                   disabled={loading}
                   accept="video/*"
                 />
-              </form>
+              </div>
             </div>
           )}
         </div>
-        {/* input box */}
-        <form
-          className="flex items-center justify-center w-full h-full"
-          onSubmit={handlesendmessage}
+
+        {/* Message Input */}
+        <Input
+          type="text"
+          placeholder="Type a message"
+          className="flex-1 bg-white dark:bg-[#2a3942] border-0 focus-visible:ring-2 focus-visible:ring-[#00a884] focus-visible:ring-offset-0 text-[#111b21] dark:text-[#e9edef] py-3 px-4 rounded-lg text-base"
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          value={message.text}
+          disabled={loading}
+        />
+
+        {/* Send/Mic Button */}
+        <button
+          className={`p-3 rounded-full transition-all ${
+            canSendMessage
+              ? "bg-[#00a884] hover:bg-[#008f72] text-white shadow-lg"
+              : "text-[#54656f] dark:text-[#8696a0] hover:bg-gray-100 dark:hover:bg-gray-700"
+          }`}
+          onClick={handleSendMessage}
+          disabled={loading}
+          aria-label={canSendMessage ? "Send message" : "Record voice message"}
         >
-          <input
-            id="message"
-            type="text"
-            value={message.text}
-            onChange={handleonchange}
-            placeholder="Type your message here.."
-            className="relative w-full h-10 px-4 py-1 text-black outline-none bg-slate-200"
-          />
-          <button className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-opacity-80 hover:text-primary">
-            <IoSendSharp size={28} className="" />
-          </button>
-        </form>
+          {canSendMessage ? (
+            <Send size={20} />
+          ) : (
+            <Mic size={20} />
+          )}
+        </button>
       </section>
     </div>
   );

@@ -6,7 +6,7 @@ function App() {
   return (
     <div>
       {/* <Header /> This is a global header for your app */}
-      <div className='container'>
+      <div className=''>
         <Outlet /> {/* Child routes will be rendered here */}
       </div>
       {/* <Footer /> This is a global footer */}

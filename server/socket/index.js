@@ -12,6 +12,7 @@ const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
       const allowedOrigins = [
+        "http://localhost:5174",
         "https://whatsapp-clone-bay-three.vercel.app",
         "https://whatsapp-clone-6w1i.onrender.com/",
       ];
