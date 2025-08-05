@@ -16,7 +16,8 @@ const UserMessagecard = ({ user }) => {
 
   const handleNavigation = (event) => {
     event.preventDefault();
-    navigate(`/${user.sender}`);
+    console.log("Navigating to chat with user:", user);
+    navigate(`/${user.receiver}`);   
   };
 
   return (

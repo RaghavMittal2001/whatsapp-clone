@@ -5,14 +5,14 @@ import User from "../model/User.js";
 const Getuserdetailfromtoken=async(token)=> {
   console.log("Token in Getuserdetailfromtoken:", token);
   // Check if token is present
-  if(!token){
+  if(!token){   
     console.log("Token is not present in Getuserdetailfromtoken");
     return {
         authtoken:token,
         message:"session out",
-        logout:true 
-    }
-  } 
+        logout:true   
+    } 
+  }   
   try {
     // const user = jwt.verify(token, process.env.JWT_SECRET);
     const decode =jwt.verify(token,process.env.Jwt_Secret_Key);

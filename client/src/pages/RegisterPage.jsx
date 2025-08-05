@@ -98,45 +98,99 @@ function RegisterPage() {
   };
 
   return (
-    <div className='full-screen'>
-      <Navbar />
-      <Toaster/>
-      <div className='mt-1 text-black' style={{ padding: "2", margin: "4 solid white", fontSize: "xxx-large" }}>
-        <h2 className='mb-4'>Register Yourself Here!</h2>
-        <form className='flex justify-center text-center' onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-2">
-            <div className='flex gap-2 mb-2 form-control'>
-              <label htmlFor="name" className='m-2'>Name:</label>
-              <input required type="text" id='name' name='name' placeholder='Enter your name' onChange={handleonchange} className='px-2 mx-4' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
-            </div>
-            <div className='flex gap-2 mb-2 form-control'>
-              <label htmlFor="password" className='m-2'>Password:</label>
-              <input required type="password" id='password' name='password' placeholder='Enter your password' onChange={handleonchange} className='' style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
-            </div>
-            <div className='flex gap-2 mb-2 form-control'>
-              <label htmlFor="email" className='m-2'>Email :</label>
-              <input required type="email" id='email' name='email' placeholder='Enter your email'  className='mx-4 ' onChange={handleonchange} style={{ backgroundColor: "#cbfee3", fontSize: 'x-large' }} />
-            </div>
-            <div className='flex gap-2 mb-2 form-control'>
-              <label htmlFor="profile_pic" className='mx-2'>Profile Photo:</label>
-              <div className='inline-flex items-center justify-center mx-2 transition duration-300 border rounded cursor-pointer bg-slate hover:bg-green-200' style={{ backgroundColor: "#cbfee3", fontSize: 'medium' }}>
-                <p className='mx-2 transition duration-300 border hover:border-primary'>
-                  <input type="file" id='profile_pic' name='profile_pic' onChange={handleUploadFile} style={{ display: 'none' }} />
-                  <span onClick={() => document.getElementById('profile_pic').click()}>
-                    {uploadPhoto ? uploadPhoto.name : "Upload a photo"}
-                  </span>
-                </p>
-                {uploadPhoto && (
-                  <button type="button" className="btn-close " aria-label="Close" onClick={handleRemovePhoto}></button>
-                )}
-              </div>
-            </div>
-            <button  type="submit" disabled={loading} className='btn btn-success hover:bg-primary'>Register</button>
-          </div>
-        </form>
+    <div className="flex flex-col min-h-screen bg-center bg-cover" style={{ backgroundImage: "url('/assets/bg.jpg')" }}>
+  <Navbar />
+  <Toaster />
 
-      </div>
+  <div className="flex items-center justify-center flex-grow px-4 py-8 bg-white bg-opacity-80 backdrop-blur-sm">
+    <div className="w-full max-w-xl p-10 text-black bg-white shadow-xl rounded-xl">
+      <h2 className="mb-6 text-3xl font-semibold text-center">Register Yourself Here!</h2>
+
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+        {/* Name */}
+        <div className="flex flex-col gap-1 text-lg">
+          <label htmlFor="name" className="font-medium">Name:</label>
+          <input
+            required
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your name"
+            onChange={handleonchange}
+            className="px-4 py-2 text-black bg-green-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="flex flex-col gap-1 text-lg">
+          <label htmlFor="password" className="font-medium">Password:</label>
+          <input
+            required
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            onChange={handleonchange}
+            className="px-4 py-2 text-black bg-green-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+        </div>
+
+        {/* Email */}
+        <div className="flex flex-col gap-1 text-lg">
+          <label htmlFor="email" className="font-medium">Email:</label>
+          <input
+            required
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            onChange={handleonchange}
+            className="px-4 py-2 text-black bg-green-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+        </div>
+
+        {/* Profile Photo */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="profile_pic" className="font-medium">Profile Photo:</label>
+          <div className="flex items-center gap-4 px-4 py-2 transition bg-green-100 rounded-md cursor-pointer hover:bg-green-200">
+            <span
+              className="text-black"
+              onClick={() => document.getElementById('profile_pic').click()}
+            >
+              {uploadPhoto ? uploadPhoto.name : "Upload a photo"}
+            </span>
+            <input
+              type="file"
+              id="profile_pic"
+              name="profile_pic"
+              onChange={handleUploadFile}
+              className="hidden"
+            />
+            {uploadPhoto && (
+              <button
+                type="button"
+                className="text-sm text-red-500 hover:underline"
+                onClick={handleRemovePhoto}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-2 text-lg text-white transition bg-green-500 rounded-md hover:bg-green-600 disabled:opacity-60"
+        >
+          Register
+        </button>
+      </form>
     </div>
+  </div>
+</div>
+
   );
 }
 

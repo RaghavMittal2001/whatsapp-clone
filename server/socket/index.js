@@ -12,7 +12,7 @@ const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
       const allowedOrigins = [
-        "http://localhost:5174",
+        "http://localhost:5173",
         "https://whatsapp-clone-bay-three.vercel.app",
         "https://whatsapp-clone-6w1i.onrender.com/",
       ];
@@ -106,7 +106,7 @@ io.on("connection", async (socket) => {
         $or: [
           { sender: data.sender, receiver: data.receiver },
           { sender: data.receiver, receiver: data.sender },
-        ],
+        ], 
       });
 
       // If conversation does not exist, create a new one

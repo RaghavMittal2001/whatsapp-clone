@@ -85,53 +85,50 @@ function CheckPasswordPage() {
     });
   };
   return (
-    <div>
-      <div className="full-screen">
-        <Navbar />
+    <div className="flex flex-col bg-cover g-center n" style={{ backgroundImage: "url('/assets/bg.jpg')" }}>
+  <Navbar />
 
-        <div
-          className="mt-1 text-black"
-          style={{
-            padding: "2",
-            margin: "4 solid white",
-            fontSize: "xxx-large",
-          }}
-        >
-          <h2 className="my-4 mb-4">Login Password </h2>
-          <form
-            className="flex justify-center text-center"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex flex-col gap-2">
-              <div
-                className="flex gap-2 mb-2 form-control"
-                style={{ fontSize: "xx-large" }}
-              >
-                <label htmlFor="Password" className="mx-2">
-                  Password:
-                </label>
-                <input
-                  onChange={handleonchange}
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your Password"
-                  style={{
-                    backgroundColor: "#cbfee3",
-                    fontSize: "x-large",
-                    padding: "5px",
-                  }}
-                />
-              </div>
-              <button type="submit" className="btn btn-success">
-               Let's Go
-              </button>
-            </div>
-          </form>
-          <p style={{fontSize:"x-large"}} className="my-3 mt-1 text-center">New User ? <Link className="transition duration-300 cursor-pointer hover:underline" to={"/register"} >Register</Link></p>
+  <div className="flex items-center justify-center flex-grow px-4 bg-white bg-opacity-80 backdrop-blur-sm">
+    <div className="w-full max-w-md p-10 text-black bg-white shadow-xl rounded-xl">
+      <h2 className="text-3xl font-semibold text-center ">Hi {location.state.name}</h2>
+      <h6 className="mb-6 text-center ">{location.state.email}</h6>
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+         
+        <div className="flex flex-col gap-2 text-lg">
+          <label htmlFor="password" className="font-medium">
+            Password:
+          </label>
+          <input
+            onChange={handleonchange}
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your Password"
+            className="px-4 py-2 text-lg text-black bg-green-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
         </div>
-      </div>
+
+        <button
+          type="submit"
+          className="px-6 py-2 text-lg text-white transition bg-green-500 rounded-md hover:bg-green-600"
+        >
+          Let's Go
+        </button>
+      </form>
+
+      <p className="mt-6 text-lg text-center">
+        Switch User?{" "}
+        <Link
+          to="/login"
+          className="text-green-600 transition duration-300 hover:underline"
+        >
+          SignIn
+        </Link>
+      </p>
     </div>
+  </div>
+</div>
+
   );
 }
 
